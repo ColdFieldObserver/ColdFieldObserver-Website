@@ -1,53 +1,39 @@
-/* Giscus 自定义主题：冷域机甲蓝（浅色） */
 :root {
   color-scheme: light;
-  --cfo-page: #eaf1fd;
-  --cfo-surface: #ffffff;
-  --cfo-panel: #e0eaf8;
-  --cfo-inset: #f3f7fd;
-  --cfo-border: #a9c3de;
-  --cfo-border-soft: #cfdef2;
-  --cfo-text: #0c1d30;
-  --cfo-muted: #45658a;
-  --cfo-subtle: #6b86a8;
-  --cfo-accent: #1260cc;
-  --cfo-accent-strong: #0d4699;
-  --cfo-accent-soft: rgba(18, 96, 204, 0.1);
-
-  --color-canvas-default: var(--cfo-surface);
-  --color-canvas-overlay: var(--cfo-surface);
-  --color-canvas-inset: var(--cfo-inset);
-  --color-canvas-subtle: var(--cfo-panel);
-  --color-border-default: var(--cfo-border);
-  --color-border-muted: var(--cfo-border-soft);
-  --color-fg-default: var(--cfo-text);
-  --color-fg-muted: var(--cfo-muted);
-  --color-fg-subtle: var(--cfo-subtle);
-  --color-accent-fg: var(--cfo-accent-strong);
-  --color-accent-emphasis: var(--cfo-accent);
+  --color-canvas-default: #ffffff;
+  --color-canvas-overlay: #ffffff;
+  --color-canvas-inset: #f3f7fd;
+  --color-canvas-subtle: #e0eaf8;
+  --color-border-default: #a9c3de;
+  --color-border-muted: #cfdef2;
+  --color-fg-default: #0c1d30;
+  --color-fg-muted: #45658a;
+  --color-fg-subtle: #6b86a8;
+  --color-accent-fg: #0d4699;
+  --color-accent-emphasis: #1260cc;
   --color-accent-muted: rgba(18, 96, 204, 0.28);
   --color-accent-subtle: #e2ecf9;
   --color-btn-text: #24405e;
-  --color-btn-bg: var(--cfo-surface);
-  --color-btn-border: var(--cfo-border);
-  --color-btn-hover-bg: var(--cfo-panel);
-  --color-btn-hover-border: var(--cfo-accent);
+  --color-btn-bg: #ffffff;
+  --color-btn-border: #a9c3de;
+  --color-btn-hover-bg: #e0eaf8;
+  --color-btn-hover-border: #1260cc;
   --color-btn-primary-text: #ffffff;
-  --color-btn-primary-bg: var(--cfo-accent);
-  --color-btn-primary-border: var(--cfo-accent);
-  --color-btn-primary-hover-bg: var(--cfo-accent-strong);
-  --color-btn-primary-hover-border: var(--cfo-accent-strong);
+  --color-btn-primary-bg: #1260cc;
+  --color-btn-primary-border: #1260cc;
+  --color-btn-primary-hover-bg: #0d4699;
+  --color-btn-primary-hover-border: #0d4699;
   --color-neutral-muted: rgba(111, 151, 192, 0.28);
   --color-primer-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.8);
   --color-primer-shadow-focus: 0 0 0 3px rgba(18, 96, 204, 0.18);
-  --color-social-reaction-bg-hover: var(--cfo-panel);
+  --color-social-reaction-bg-hover: #e0eaf8;
   --color-social-reaction-bg-reacted-hover: #d3e2f4;
 }
 
 body,
 .gsc-main {
-  color: var(--cfo-text);
-  background-color: var(--cfo-page);
+  color: #0c1d30;
+  background-color: #eaf1fd;
   background-image: linear-gradient(rgba(18, 96, 204, 0.035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(18, 96, 204, 0.035) 1px, transparent 1px);
   background-size: 32px 32px;
@@ -55,15 +41,15 @@ body,
 
 .gsc-header {
   padding-bottom: 14px;
-  border-bottom: 1px solid var(--cfo-border);
+  border-bottom: 1px solid #a9c3de;
 }
 
 .gsc-comment-box,
 .gsc-comment {
-  color: var(--cfo-text);
-  background: var(--cfo-surface);
-  border: 1px solid var(--cfo-border);
-  border-left: 3px solid var(--cfo-accent);
+  color: #0c1d30;
+  background: #ffffff;
+  border: 1px solid #a9c3de;
+  border-left: 3px solid #1260cc;
   border-radius: 2px;
   box-shadow: 0 3px 12px rgba(23, 62, 107, 0.07);
 }
@@ -78,8 +64,8 @@ body,
 }
 
 .gsc-comment-header {
-  background: var(--cfo-panel);
-  border-color: var(--cfo-border-soft);
+  background: #e0eaf8;
+  border-color: #cfdef2;
 }
 
 .gsc-header,
@@ -87,63 +73,63 @@ body,
 .gsc-comment-reactions,
 .gsc-reply,
 .gsc-comment-box-tabs {
-  border-color: var(--cfo-border-soft);
+  border-color: #cfdef2;
 }
 
 .gsc-comment-box-textarea,
 .gsc-comment-box-textarea textarea,
 .gsc-comment-box-textarea textarea:focus {
-  color: var(--cfo-text);
-  background: var(--cfo-inset);
-  border-color: var(--cfo-border);
+  color: #0c1d30;
+  background: #f3f7fd;
+  border-color: #a9c3de;
   border-radius: 2px;
 }
 
 .gsc-comment-box-textarea textarea::placeholder {
-  color: var(--cfo-subtle);
+  color: #6b86a8;
 }
 
 .gsc-comment-box-textarea textarea:focus {
-  border-color: var(--cfo-accent);
+  border-color: #1260cc;
   box-shadow: 0 0 0 3px rgba(18, 96, 204, 0.14);
 }
 
 .gsc-comment-content,
 .gsc-timeline {
-  color: var(--cfo-muted);
+  color: #45658a;
 }
 
 .gsc-comment-content blockquote {
-  color: var(--cfo-muted);
-  background: var(--cfo-accent-soft);
-  border-left: 3px solid var(--cfo-accent);
+  color: #45658a;
+  background: rgba(18, 96, 204, 0.1);
+  border-left: 3px solid #1260cc;
 }
 
 .gsc-comment-content code,
 .gsc-comment-content pre {
-  color: var(--cfo-accent-strong);
-  background: var(--cfo-inset);
-  border-color: var(--cfo-border-soft);
+  color: #0d4699;
+  background: #f3f7fd;
+  border-color: #cfdef2;
 }
 
 .gsc-comment-content pre {
-  border-left: 2px solid var(--cfo-accent);
+  border-left: 2px solid #1260cc;
 }
 
 .gsc-comment-content hr {
-  background-color: var(--cfo-border-soft);
+  background-color: #cfdef2;
 }
 
 .gsc-comment-content a,
 .gsc-header a,
 .gsc-footer a {
-  color: var(--cfo-accent-strong);
+  color: #0d4699;
 }
 
 .gsc-comment-content a:hover,
 .gsc-header a:hover,
 .gsc-footer a:hover {
-  color: var(--cfo-accent);
+  color: #1260cc;
 }
 
 .gsc-comment-box-bottom .btn,
@@ -157,6 +143,6 @@ body,
 button:focus-visible,
 a:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid var(--cfo-accent);
+  outline: 2px solid #1260cc;
   outline-offset: 2px;
 }
