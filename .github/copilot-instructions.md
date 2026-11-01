@@ -14,6 +14,16 @@
 - 悬浮反馈只用掉颜色、描边、阴影与封面轻微 `scale`；**不要**做位移、旋转一类夸张效果（长列表里会抖）。
 - 网格底纹（`--grid-line`）只允许出现在首页 Hero 一处，其余页面用纯色底。
 
+### 禁止注入式增强（硬性规则）
+
+- **禁止在 `public/` 下放 JS / CSS，再通过 `app.head` 的 `link` / `script` 注入它们来做功能增强。** 需要新交互就写 Vue 组件（`app/components/*.vue`）、composable（`app/composables/`）或客户端插件（`app/plugins/*.client.ts`）；需要新样式就写进 `app/assets/styles/` 或组件的 `<style scoped>`。`nuxt.config.ts` 的 `app.head` 只用于**站点元信息**与**第三方 CDN 资源**（字体、首帧主题脚本这类），不放本站自己写的逻辑。
+- 为什么（同作者 PidanUI 官网的返工教训：`a3045cc` 引入 `public/custom/{custom.css,custom.js}`，`b5b79b1` 又全部拆回主站代码）：
+  - **SPA 不接管**：注入的脚本只在首次加载扫一遍 DOM，站内跳转后新增的页面不会被处理（滚动显现、进度条、返回顶部全部失效），而本站是 Nuxt 客户端路由。
+  - **绕开样式分层**：`public/` 里的 CSS 拿不到 Tailwind 的 `@layer`，只能靠 `!important` 和特异性堆叠去压既有规则，改一处坏一片。
+  - **不受类型与 lint 覆盖**：`public/` 是原样拷贝，`eslint.config.mjs` 与 `pnpm build` 都不会检查，等于在受管代码之外开了一个无人守的口子。
+  - **重复实现**：站内已有 `useScrollReveal` / `PageProgress` 等能力，注入层再写一份必然与它们冲突。
+- `public/` 只放**原样发给浏览器、不需要加工的资源**：图片、`giscus/` 下的评论皮肤、`.nojekyll` 之类。例外是 `giscus/*.css`——那是 giscus iframe 跨源拉取的第三方皮肤，必须公网可访问的独立 URL，不属于本站样式（且主题 URL 要跟随实际访问源，见 `GiscusComments.vue`）。
+
 ### 一致性
 
 - 文章列表（新闻 / 分类 / 标签 / 搜索 / 首页最新日志）**必须复用同一套卡片机制**：`PostCard` + `CardGrid` + `Pagination` + `usePagedPosts`。归档页例外（按年分页 + 按月分组）。
@@ -84,7 +94,7 @@ app/
 ├─ utils/base-url.ts              # withBase 垫片
 └─ assets/styles/                 # main.css / tokens.css / base.css / prose.css / animation.css
 content/posts/*.md                # 文章（唯一内容源）
-public/                           # 图片（logo.webp / avatar.svg）、favicon、giscus 主题
+public/                           # 图片（logo.webp / avatar.svg）、favicon、giscus 主题（只放资源，不放注入式 JS/CSS）
 server/routes/                    # atom.xml、rss.xml、api/posts.json、api/search.json
 shared/                           # site.ts（SITE / TOOL_LINKS / PAGE_SIZE / GISCUS）、types/、utils/
 build/post-index.ts               # 构建期 fs 枚举：prerender 路由全集
@@ -228,3 +238,4 @@ content.config.ts / nuxt.config.ts
 8. 目录行为正确：没写 `[TOC]` 的文章不出目录，写了的只出一个、且就在写的位置。
 9. 没有提交构建产物、缓存或临时文件。
 10. `pnpm format:check` 与 `pnpm lint` 都通过（CI 里它们卡在部署之前，本地先跑一遍省得等）。
+11. `public/` 里只有资源（图片、favicon、giscus 皮肤），没有新增的注入式 JS / CSS。
