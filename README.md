@@ -5,11 +5,11 @@
 ![Last Commit](https://img.shields.io/github/last-commit/ColdFieldObserver/coldfieldobserver.github.io?label=Last%20Commit)
 [![Nuxt](https://img.shields.io/badge/Nuxt-4.6.3-00DC82?logo=Nuxt&logoColor=white)](https://nuxt.com/)
 [![Nuxt UI](https://img.shields.io/badge/Nuxt%20UI-4.12-00DC82?logo=Nuxt&logoColor=white)](https://ui.nuxt.com/)
-[![Vue](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=Vue.js&logoColor=white)](https://cn.vuejs.org/)
+[![Vue](https://img.shields.io/badge/Vue-3.5.44-4FC08D?logo=Vue.js&logoColor=white)](https://cn.vuejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-7.0.2-3178C6?logo=TypeScript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.3.3-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 ![License](https://img.shields.io/badge/License-MIT-blue)
-[![BiliBili](https://img.shields.io/badge/BiliBili-冷域观者-FF69B4?logo=bilibili&logoColor=F5F5F5)](https://space.bilibili.com/3706982592678629)
+[![BiliBili](https://img.shields.io/badge/BiliBili-冷域观者-FF69B4?logo=bilibili&logoColor=F5F5F5)](https://space.bilibili.com/3632301571311734)
 [![GitHub](https://img.shields.io/badge/GitHub-ColdFieldObserver-blue?logo=github&logoColor=F5F5F5)](https://github.com/ColdFieldObserver)
 
 冷域观者的个人网站，使用 Nuxt 4 + Nuxt UI + @nuxt/content + TypeScript + Tailwind CSS 构建，通过 `nuxt generate` 静态生成（SSG）后部署到 GitHub Pages。现代圆角版式 + 机甲蓝主题色，无后端、无第三方统计脚本。
@@ -91,12 +91,6 @@
 下面是这个仓库的[Stone Badge](https://stone.professorlee.work/)。
 
 ![Stone Badge](https://stone.professorlee.work/api/stone/ColdFieldObserver/coldfieldobserver.github.io)
-
-## 关于冷域观者
-
-一个逃跑吧少年和蛋仔派对玩家，偶尔也玩我的世界、PVZ2 和保卫萝卜4，同时是逃少音乐档案馆的主理人。曾用名 AsyncObserver、蛋仔派对远航蛋、主唱耀星_Eggy、UNI-航行的灯塔、TP-RLX-LIGHT 等，喜欢数码和技术，C / C++ / C# / Python / HTML / CSS / JavaScript 都懂一点。
-
-想说的话基本都写在[网站](https://coldfieldobserver.github.io)里了。
 
 ## 部署方式
 
