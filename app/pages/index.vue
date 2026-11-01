@@ -39,7 +39,9 @@ useHead({ title: SITE.title });
         decoding="async"
         fetchpriority="high"
       />
-      <h1 class="mx-auto mt-6 max-w-[22em] text-[clamp(26px,4.6vw,40px)] leading-[1.2] font-extrabold tracking-tight text-highlighted">
+      <h1
+        class="mx-auto mt-6 max-w-[22em] text-[clamp(26px,4.6vw,40px)] leading-[1.2] font-extrabold tracking-tight text-highlighted"
+      >
         欢迎来到冷域观者的个人网站
       </h1>
       <p class="mx-auto mt-4 max-w-[620px] text-[15.5px] leading-[1.9] text-toned">
@@ -72,7 +74,11 @@ useHead({ title: SITE.title });
           </h2>
         </template>
         <ul class="flex flex-col gap-3">
-          <li v-for="line in PERSONAL_PROFILE" :key="line" class="flex gap-2 text-sm leading-[1.8] text-toned">
+          <li
+            v-for="line in PERSONAL_PROFILE"
+            :key="line"
+            class="flex gap-2 text-sm leading-[1.8] text-toned"
+          >
             <UIcon
               name="i-lucide-chevron-right"
               class="mt-1 size-4 shrink-0 text-primary"
@@ -104,7 +110,12 @@ useHead({ title: SITE.title });
       <CardGrid :posts="latest" empty-text="暂无文章" />
       <template #footer>
         <div class="flex justify-center">
-          <UButton to="/posts/" size="lg" trailing-icon="i-lucide-arrow-right" label="查看全部文章" />
+          <UButton
+            to="/posts/"
+            size="lg"
+            trailing-icon="i-lucide-arrow-right"
+            label="查看全部文章"
+          />
         </div>
       </template>
     </UPageSection>
@@ -164,7 +175,13 @@ useHead({ title: SITE.title });
     >
       <!-- 与 PidanUI 官网同一套规则：超过 5 张卡才滚动。
            卡片少的时候跑马灯只会让人看不清名字，还会把留白变成空白跑道。 -->
-      <UMarquee v-if="idMarqueeActive" :repeat="2" pause-on-hover :overlay="false" class="id-marquee">
+      <UMarquee
+        v-if="idMarqueeActive"
+        :repeat="2"
+        pause-on-hover
+        :overlay="false"
+        class="id-marquee"
+      >
         <GameIdCard v-for="item in GAME_IDS" :key="item.name" :item="item" />
       </UMarquee>
 
@@ -201,7 +218,13 @@ useHead({ title: SITE.title });
       </UPageGrid>
       <template #footer>
         <div class="flex justify-center">
-          <UButton to="/tools/" variant="soft" color="neutral" label="更多工具" trailing-icon="i-lucide-arrow-right" />
+          <UButton
+            to="/tools/"
+            variant="soft"
+            color="neutral"
+            label="更多工具"
+            trailing-icon="i-lucide-arrow-right"
+          />
         </div>
       </template>
     </UPageSection>

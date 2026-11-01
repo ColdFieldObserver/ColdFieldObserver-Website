@@ -33,7 +33,14 @@ const nextHref = computed(() => `${props.pagePrefix}${props.current + 1}`);
       icon="i-lucide-chevron-left"
       label="上一页"
     />
-    <UButton v-else variant="outline" color="neutral" icon="i-lucide-chevron-left" label="上一页" disabled />
+    <UButton
+      v-else
+      variant="outline"
+      color="neutral"
+      icon="i-lucide-chevron-left"
+      label="上一页"
+      disabled
+    />
 
     <span class="px-1 text-sm text-dimmed">{{ current }} / {{ totalPages }}</span>
 
@@ -45,6 +52,13 @@ const nextHref = computed(() => `${props.pagePrefix}${props.current + 1}`);
       trailing-icon="i-lucide-chevron-right"
       label="下一页"
     />
-    <UButton v-else variant="outline" color="neutral" trailing-icon="i-lucide-chevron-right" label="下一页" disabled />
+    <UButton
+      v-else
+      variant="outline"
+      color="neutral"
+      trailing-icon="i-lucide-chevron-right"
+      label="下一页"
+      disabled
+    />
   </nav>
 </template>

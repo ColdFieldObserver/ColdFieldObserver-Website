@@ -7,7 +7,9 @@ useHead({ title: '工具箱' });
 <template>
   <div class="mx-auto max-w-page">
     <header class="mb-6 border-b border-default pb-5">
-      <h1 class="text-[clamp(24px,3.4vw,32px)] font-extrabold tracking-tight text-highlighted">工具箱</h1>
+      <h1 class="text-[clamp(24px,3.4vw,32px)] font-extrabold tracking-tight text-highlighted">
+        工具箱
+      </h1>
       <p class="mt-1.5 text-sm text-dimmed">纯前端运行，数据不上传服务器</p>
     </header>
 

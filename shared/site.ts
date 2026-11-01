@@ -10,8 +10,7 @@ export const SITE = {
   /** 站点主标题 */
   title: '冷域观者的个人网站',
   /** 站点描述 */
-  description:
-    '冷域观者的个人网站，提供在线工具、资源导航与博客日志（支持 RSS 订阅与全站检索）。',
+  description: '冷域观者的个人网站，提供在线工具、资源导航与博客日志（支持 RSS 订阅与全站检索）。',
   /** 站点根地址（自定义域名，原 GitHub Pages 域名已 301 过来） */
   mainUrl: 'https://coldfield.skystarlight.top',
 } as const;

@@ -89,7 +89,10 @@ onBeforeUnmount(() => {
       <div class="px-5 py-4">
         <SearchBox autofocus />
         <!-- overscroll-contain：body 已是正常文档流，滚到底时不要穿透到背后页面 -->
-        <div class="max-h-[min(58vh,560px)] overflow-y-auto overscroll-contain" @click="onResultClick">
+        <div
+          class="max-h-[min(58vh,560px)] overflow-y-auto overscroll-contain"
+          @click="onResultClick"
+        >
           <SearchResults />
         </div>
       </div>

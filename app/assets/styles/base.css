@@ -14,11 +14,13 @@
 :root {
   color-scheme: light;
 
-  --font-ui: 'HarmonyOS Sans SC', 'MiSans', 'PingFang SC', 'Microsoft YaHei', 'Segoe UI',
-    system-ui, -apple-system, Roboto, sans-serif;
+  --font-ui:
+    'HarmonyOS Sans SC', 'MiSans', 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui,
+    -apple-system, Roboto, sans-serif;
   /* 等宽字体栈：末尾补中文无衬线 fallback，避免代码块内中文回退到宋体 */
-  --font-code: 'Cascadia Code', 'Consolas', 'Menlo', 'Microsoft YaHei UI', 'PingFang SC',
-    'HarmonyOS Sans SC', 'Microsoft YaHei', monospace;
+  --font-code:
+    'Cascadia Code', 'Consolas', 'Menlo', 'Microsoft YaHei UI', 'PingFang SC', 'HarmonyOS Sans SC',
+    'Microsoft YaHei', monospace;
 
   /* 顶栏高度：UHeader 与锚点 / 代码块 sticky 偏移共用同一个源 */
   --shell-header-h: var(--ui-header-height, 4rem);

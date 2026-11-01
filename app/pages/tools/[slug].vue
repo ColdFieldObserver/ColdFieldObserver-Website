@@ -147,7 +147,13 @@ useHead({ title: computed(() => tool.value?.name ?? '工具') });
             label="处理文本为短视频文案"
             @click="eggy.process(input, true)"
           />
-          <UButton size="sm" variant="outline" color="neutral" label="加载示例" @click="loadExample" />
+          <UButton
+            size="sm"
+            variant="outline"
+            color="neutral"
+            label="加载示例"
+            @click="loadExample"
+          />
           <UButton size="sm" variant="ghost" color="neutral" label="清空" @click="clear" />
         </template>
 
@@ -161,14 +167,22 @@ useHead({ title: computed(() => tool.value?.name ?? '工具') });
             :label="label"
             @click="mode = index === 0 ? 'encode' : 'decode'"
           />
-          <UButton size="sm" variant="ghost" color="neutral" label="加载示例" @click="loadExample" />
+          <UButton
+            size="sm"
+            variant="ghost"
+            color="neutral"
+            label="加载示例"
+            @click="loadExample"
+          />
         </template>
       </div>
 
       <div class="mt-5 mb-2 flex items-center justify-between">
         <span class="text-xs font-medium text-dimmed">
           结果
-          <span v-if="isEggy && eggy.resultType.value === 'error'" class="ml-1 text-error">（未识别）</span>
+          <span v-if="isEggy && eggy.resultType.value === 'error'" class="ml-1 text-error"
+            >（未识别）</span
+          >
         </span>
         <UButton
           variant="ghost"
@@ -182,7 +196,9 @@ useHead({ title: computed(() => tool.value?.name ?? '工具') });
       </div>
       <pre
         class="min-h-[92px] overflow-x-auto rounded-lg border border-default bg-muted p-3 font-mono text-[13px] whitespace-pre-wrap text-toned"
-      >{{ output || (isEggy ? '填写上面的分享文本，再点「处理文本」' : '（结果会实时显示在这里）') }}</pre>
+        >{{
+          output || (isEggy ? '填写上面的分享文本，再点「处理文本」' : '（结果会实时显示在这里）')
+        }}</pre>
     </UCard>
   </div>
 </template>

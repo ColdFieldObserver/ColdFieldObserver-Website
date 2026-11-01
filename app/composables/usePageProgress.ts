@@ -38,7 +38,6 @@ export interface PageProgressState {
 }
 
 export function usePageProgress(): PageProgressState {
-
   const progress = ref(0);
   const active = ref(false);
   const done = ref(false);

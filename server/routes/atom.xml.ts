@@ -14,7 +14,10 @@ const escapeXml = (value: unknown): string =>
 // Atom 1.0 订阅源（构建期预渲染为静态 atom.xml）
 export default defineEventHandler(async (event) => {
   const docs = await queryCollection(event, 'posts').all();
-  const posts = docs.map((doc) => toBasePost(doc as never)).sort(byDateDesc).slice(0, FEED_LIMIT);
+  const posts = docs
+    .map((doc) => toBasePost(doc as never))
+    .sort(byDateDesc)
+    .slice(0, FEED_LIMIT);
   const updatedAt = posts[0]?.timestamp ?? 0;
   const updated = new Date(updatedAt > 0 ? updatedAt : Date.now()).toISOString();
   const iso = (timestamp: number): string =>

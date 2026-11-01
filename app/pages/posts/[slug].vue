@@ -39,7 +39,10 @@ function runEnhance(): void {
 }
 
 onMounted(runEnhance);
-watch(() => route.path, () => requestAnimationFrame(runEnhance));
+watch(
+  () => route.path,
+  () => requestAnimationFrame(runEnhance),
+);
 
 useHead({ title: post.value.title });
 </script>
@@ -61,7 +64,11 @@ useHead({ title: post.value.title });
       <h1 class="post-title">{{ post.title }}</h1>
       <div class="post-meta">
         <time>{{ meta.date }}</time>
-        <NuxtLink v-for="category in meta.categories" :key="category" :to="`/categories/${category}`">
+        <NuxtLink
+          v-for="category in meta.categories"
+          :key="category"
+          :to="`/categories/${category}`"
+        >
           <UBadge color="primary" variant="soft" size="sm">{{ category }}</UBadge>
         </NuxtLink>
         <NuxtLink v-for="tag in meta.tags" :key="tag" :to="`/tags/${tag}`">
@@ -74,7 +81,10 @@ useHead({ title: post.value.title });
       <ContentRenderer :value="post" />
     </div>
 
-    <nav class="mt-10 flex justify-between gap-4 border-t border-default pt-5" aria-label="上一篇 / 下一篇">
+    <nav
+      class="mt-10 flex justify-between gap-4 border-t border-default pt-5"
+      aria-label="上一篇 / 下一篇"
+    >
       <NuxtLink v-if="prev" class="max-w-[46%] text-sm text-primary hover:underline" :to="prev.url">
         ← {{ prev.title }}
       </NuxtLink>
