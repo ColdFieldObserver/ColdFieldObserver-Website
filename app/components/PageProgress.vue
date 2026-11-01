@@ -43,7 +43,9 @@ defineProps<{
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #fff 35%, transparent),
     0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
-  transition: width 0.25s ease, opacity 0.4s ease;
+  transition:
+    width 0.25s ease,
+    opacity 0.4s ease;
 }
 
 .page-progress.active {

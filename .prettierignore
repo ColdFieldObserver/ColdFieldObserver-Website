@@ -1,0 +1,18 @@
+# 依赖与构建产物：不参与格式化检查
+node_modules/
+.nuxt/
+.output/
+.data/
+.nitro/
+.cache/
+dist/
+
+# 锁文件由包管理器生成，手动格式化只会制造无意义 diff
+pnpm-lock.yaml
+
+# 文章正文：MDC 组件、KaTeX 公式与中文长句经不起换行重排，
+# 而且排版效果由 prose.css 决定，不属于代码风格范畴
+content/
+
+# 静态资源：图片 / giscus 皮肤等属于外部资源
+public/

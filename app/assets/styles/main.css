@@ -17,16 +17,16 @@
    ============================================================ */
 @layer theme, base, components, utilities;
 
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
 /* 只要 theme + base + utilities，不用 `@import "tailwindcss"` 总入口：
    总入口会把四个层再声明一遍，且顺序不可控。 */
-@import "tailwindcss/utilities.css" layer(utilities);
+@import 'tailwindcss/utilities.css' layer(utilities);
 
 /* Nuxt UI：主题变量（--ui-*）、组件样式与 keyframes。位置敏感，勿上移。 */
-@import "@nuxt/ui";
+@import '@nuxt/ui';
 
-@import "./tokens.css";
-@import "./base.css";
-@import "./prose.css";
-@import "./animation.css";
+@import './tokens.css';
+@import './base.css';
+@import './prose.css';
+@import './animation.css';

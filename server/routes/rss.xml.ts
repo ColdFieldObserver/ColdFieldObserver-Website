@@ -11,8 +11,7 @@ const escapeXml = (value: unknown): string =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
 
-const rfc822 = (timestamp: number): string =>
-  new Date(timestamp || Date.now()).toUTCString();
+const rfc822 = (timestamp: number): string => new Date(timestamp || Date.now()).toUTCString();
 
 // RSS 2.0 订阅源（参考项目只有 Atom，这里按原站行为保留 RSS）
 export default defineEventHandler(async (event) => {

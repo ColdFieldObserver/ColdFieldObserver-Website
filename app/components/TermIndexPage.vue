@@ -17,8 +17,12 @@ const icon = computed(() => (props.kind === 'categories' ? 'i-lucide-folder' : '
 <template>
   <div class="mx-auto max-w-page">
     <header class="mb-6 border-b border-default pb-5">
-      <h1 class="text-[clamp(24px,3.4vw,32px)] font-extrabold tracking-tight text-highlighted">{{ title }}</h1>
-      <p class="mt-1.5 text-sm text-dimmed">共 {{ terms.length }} {{ unit }} · {{ total }} 篇文章</p>
+      <h1 class="text-[clamp(24px,3.4vw,32px)] font-extrabold tracking-tight text-highlighted">
+        {{ title }}
+      </h1>
+      <p class="mt-1.5 text-sm text-dimmed">
+        共 {{ terms.length }} {{ unit }} · {{ total }} 篇文章
+      </p>
     </header>
 
     <p v-if="!terms.length" class="py-11 text-center text-sm text-dimmed">暂无{{ title }}</p>

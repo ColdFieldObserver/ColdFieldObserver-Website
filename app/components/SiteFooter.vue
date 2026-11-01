@@ -9,7 +9,7 @@ import { FRIEND_LINKS, SOCIAL_LINKS } from '~/data/profile';
 // 原 /about 页的「版权与说明」压缩成 #left 里的一行，页面本身已删除。
 // ============================================================
 // 这里的 year 必须使用固定字符串，而不是用Date相关方法动态获取
-const year: string = "2026";
+const year: string = '2026';
 </script>
 
 <template>
@@ -47,7 +47,9 @@ const year: string = "2026";
 
           <!-- 友情链接 -->
           <div class="min-w-0 md:col-span-1 lg:col-span-2">
-            <h2 class="mb-3 text-[13px] font-bold tracking-[0.5px] text-dimmed uppercase">友情链接</h2>
+            <h2 class="mb-3 text-[13px] font-bold tracking-[0.5px] text-dimmed uppercase">
+              友情链接
+            </h2>
             <div class="grid gap-2 sm:grid-cols-2">
               <a
                 v-for="link in FRIEND_LINKS"
@@ -65,7 +67,9 @@ const year: string = "2026";
 
           <!-- 订阅与社交 -->
           <div class="min-w-0">
-            <h2 class="mb-3 text-[13px] font-bold tracking-[0.5px] text-dimmed uppercase">订阅与社交</h2>
+            <h2 class="mb-3 text-[13px] font-bold tracking-[0.5px] text-dimmed uppercase">
+              订阅与社交
+            </h2>
             <div class="grid gap-2">
               <!-- RSS 订阅 -->
               <a
@@ -97,9 +101,7 @@ const year: string = "2026";
 
     <template #left>
       <!-- 开源声明 -->
-      <p class="text-sm text-dimmed">
-        {{ year }} {{ SITE.brand }} · 网站代码以 MIT 许可证开源
-      </p>
+      <p class="text-sm text-dimmed">{{ year }} {{ SITE.brand }} · 网站代码以 MIT 许可证开源</p>
     </template>
   </UFooter>
 </template>
