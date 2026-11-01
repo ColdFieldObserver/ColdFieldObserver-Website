@@ -10,12 +10,14 @@ import { initTheme, onThemeChange, resolvedDark } from '~/composables/useTheme';
 //   2. 加载占位骨架屏 —— iframe 就绪前保持视觉填充
 //   3. 配色跟随站点主题 —— 用 public/giscus/{light,dark}.css 这套机甲蓝皮肤
 //
-// 皮肤不生效的两个常见原因，这里都兜住了：
+// 皮肤不生效的几个常见原因，这里都兜住了：
 //   - 注入脚本时用的主题取决于 resolvedDark，而 resolvedDark 依赖 matchMedia 的
 //     首次读取；先 initTheme() 再取 -> 首帧就是正确皮肤
 //   - iframe 加载完成后 giscus 会用 data-theme 重新渲染，若首帧主题被忽略
 //     （例如暗色系统下拿到 light），这里在 iframe load 与主题变化时各补一次
 //     postMessage，保证最终配色与站点一致
+//   - 主题 CSS 由 giscus 的 iframe 跨源拉取，域名迁移后旧域名 301 会丢掉 CORS
+//     响应头，样式表被浏览器拦掉就退回默认皮肤；见 giscusTheme()
 const route = useRoute();
 const container = ref<HTMLElement | null>(null);
 const loading = ref(true);
@@ -27,10 +29,20 @@ let visibilityObserver: IntersectionObserver | null = null;
 let stopThemeWatch: (() => void) | null = null;
 let fallbackTimer: number | null = null;
 
-/** 当前应使用的机甲配色 giscus 样式表（绝对地址，giscus 只接受公网可访问 URL） */
+/**
+ * 当前应使用的机甲配色 giscus 样式表（绝对地址，giscus 只接受公网可访问 URL）。
+ *
+ * 必须随实际访问源走，不能写死域名：giscus 是在它自己的 iframe 里以 CORS 方式
+ * 拉取这份 CSS 的，而带 Origin 的跳转响应（例如域名迁移后旧站 301 到新站）
+ * 不带 Access-Control-Allow-Origin，浏览器会直接拦掉跨源样式表，giscus 于是
+ * 退回默认皮肤 —— 表现就是「主题失效」。用当前 https 源可天然免疫域名迁移；
+ * http（本地预览）与 SSR 场景退回 SITE.mainUrl。
+ */
 function giscusTheme(): string {
   const theme = resolvedDark.value ? 'dark' : 'light';
-  return new URL(`/giscus/${theme}.css`, `${SITE.mainUrl}/`).href;
+  const origin = typeof window === 'undefined' ? '' : window.location.origin;
+  const base = origin.startsWith('https://') ? origin : SITE.mainUrl;
+  return new URL(`/giscus/${theme}.css`, `${base}/`).href;
 }
 
 /** 已加载的 iframe 无法改属性，需通过 postMessage 通知它切换配色 */

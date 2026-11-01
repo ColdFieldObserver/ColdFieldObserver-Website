@@ -28,7 +28,7 @@
 | 项 | 值 |
 | --- | --- |
 | 定位 | 个人站点，纯静态（SSG），部署于 GitHub Pages |
-| 线上地址 | https://coldfieldobserver.github.io（`app.baseURL = '/'`，URL 不带 `.html` 与尾斜杠） |
+| 线上地址 | https://coldfield.skystarlight.top（`app.baseURL = '/'`，URL 不带 `.html` 与尾斜杠） |
 | 技术栈 | Nuxt `4.6.3` + Vue 3 + TypeScript `~7.0.2` + Tailwind CSS `4.3.3` + **Nuxt UI `4.12`** + @nuxt/content `3.16` |
 | 包管理器 | pnpm 12（依赖构建设置在 `pnpm-workspace.yaml` 的 `allowBuilds`） |
 | 发布流程 | 推送到 `master` → `.github/workflows/deploy.yml` 构建并部署 `.output/public` |
