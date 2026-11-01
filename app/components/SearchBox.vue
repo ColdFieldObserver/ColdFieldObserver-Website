@@ -23,6 +23,12 @@ function onSubmit(): void {
   writeKeywordToUrl();
 }
 
+function clearKeyword(): void {
+  value.value = '';
+  writeKeywordToUrl();
+  inputEl.value?.focus();
+}
+
 onMounted(() => {
   mounted.value = true;
   syncKeywordFromUrl();
@@ -33,42 +39,39 @@ onMounted(() => {
 <template>
   <form class="mb-4" role="search" @submit.prevent="onSubmit">
     <!-- 降级提示：普通元素而非 <noscript>，避免 hydration 不一致 -->
-    <p class="news-search-noscript hidden text-[13px] text-ink-3">
+    <p class="news-search-noscript hidden text-sm text-dimmed">
       本站搜索需要启用 JavaScript。你可以使用
-      <NuxtLink class="text-accent-2 underline" to="/atom.xml">RSS 订阅</NuxtLink>
-      获取最新日志。
+      <!-- 订阅源由 server/routes 生成，不是页面：用裸 <a>，走 NuxtLink 会让
+           vue-router 找不到路由而报 R0004 -->
+      <a class="text-primary underline" :href="withBase('/atom.xml')">RSS 订阅</a>
+      获取最新文章。
     </p>
 
     <template v-if="mounted">
       <div
-        class="mecha-clip-s flex items-center gap-2.5 border border-line bg-panel px-3.5 py-2.5 transition-colors focus-within:border-accent"
+        class="flex items-center gap-2.5 rounded-lg border border-default bg-muted px-3.5 py-2.5 transition-colors focus-within:border-primary"
       >
-        <Icon name="i-lucide-search" class="size-4 shrink-0 text-ink-3" aria-hidden="true" />
+        <UIcon name="i-lucide-search" class="size-4 shrink-0 text-dimmed" aria-hidden="true" />
         <input
           ref="inputEl"
-          class="min-w-0 flex-1 bg-transparent font-mono text-[14px] text-ink outline-none placeholder:text-ink-3"
+          class="min-w-0 flex-1 bg-transparent text-sm text-default outline-none placeholder:text-dimmed"
           type="search"
           name="q"
           autocomplete="off"
-          placeholder="检索日志标题、正文与标签…"
+          placeholder="检索文章标题、正文与标签…"
           :value="value"
           @input="onInput"
         />
-        <button
+        <UButton
           v-if="value"
-          type="button"
-          class="text-ink-3 transition-colors hover:text-accent-2"
+          variant="ghost"
+          color="neutral"
+          size="xs"
+          square
+          icon="i-lucide-x"
           aria-label="清空关键词"
-          @click="
-            () => {
-              value = '';
-              writeKeywordToUrl();
-              inputEl?.focus();
-            }
-          "
-        >
-          <Icon name="i-lucide-x" class="size-4" />
-        </button>
+          @click="clearKeyword"
+        />
       </div>
     </template>
   </form>

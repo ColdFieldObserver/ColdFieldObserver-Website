@@ -4,58 +4,59 @@ import type { Post } from '#shared/types/post';
 
 const props = defineProps<{ post: Post }>();
 
+// 封面：外链原样输出，站内相对路径补 base
 const coverSrc = computed(() => {
   const cover = props.post.cover;
   if (!cover) return withBase('/images/default_cover.svg');
   if (/^(?:https?:|data:)/i.test(cover)) return cover;
   return withBase(cover.startsWith('/') ? cover : `/${cover}`);
 });
+
+/** 分类只取第一个：卡片信息行保持单行 */
+const primaryCategory = computed(() => props.post.categories[0] ?? '');
 </script>
 
 <template>
   <!--
-    悬浮反馈只有「描边 + 外发光 + 封面轻微缩放 + 顶部高光条展开」，
-    不再做位移：链接右移那类动效在长列表里会抖，也已按要求移除。
+    卡片结构：封面通栏 + 三行信息（标题 / 分类 · 日期 / 摘要）
+    分层只靠描边 + hover 阴影，不用底色差 —— 页面底与卡片白只差约 1% 亮度，
+    靠底色分层等于没有边界。
   -->
   <NuxtLink
-    class="group mecha-clip-l relative flex flex-col overflow-hidden border border-line bg-card transition-[border-color,box-shadow] duration-200 before:absolute before:inset-x-0 before:top-0 before:z-1 before:h-0.5 before:origin-left before:scale-x-0 before:bg-accent before:transition-transform before:duration-300 before:content-[''] hover:border-edge hover:shadow-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent/55 group-hover:before:scale-x-100"
+    class="group flex w-full flex-col overflow-hidden rounded-xl border border-default bg-default transition-[border-color,box-shadow] duration-200 hover:border-primary/40 hover:shadow-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary/55"
     :to="post.url"
   >
-    <div class="relative aspect-[2/1] overflow-hidden border-b border-line bg-accent-soft">
-      <span
+    <div class="relative aspect-video w-full overflow-hidden bg-muted">
+      <UBadge
         v-if="post.stickypost"
-        class="mecha-tag absolute top-2.5 left-2.5 z-1 bg-panel/90 backdrop-blur-sm"
-      >
-        置顶
-      </span>
+        class="absolute top-2 left-2 z-1"
+        color="primary"
+        size="sm"
+        label="置顶"
+      />
       <img
         :src="coverSrc"
         :alt="post.title"
         loading="lazy"
         decoding="async"
-        class="size-full object-cover transition-transform duration-[450ms] group-hover:scale-[1.05]"
+        class="size-full object-cover"
       />
     </div>
 
-    <div class="flex flex-1 flex-col gap-2 p-4">
-      <div class="flex flex-wrap items-center gap-2 font-mono text-[11.5px] text-ink-3">
+    <div class="flex flex-1 flex-col gap-3 p-5">
+      <h3 class="line-clamp-2 text-base leading-[1.5] font-semibold text-highlighted">
+        {{ post.title }}
+      </h3>
+
+      <div class="flex flex-wrap items-center gap-1.5 text-[12.5px] text-dimmed">
+        <span v-if="primaryCategory" class="font-medium text-primary">{{ primaryCategory }}</span>
+        <span v-if="primaryCategory" aria-hidden="true">·</span>
         <time>{{ post.date }}</time>
-        <span v-for="tag in post.tags.slice(0, 2)" :key="tag" class="mecha-tag text-[11px]">
-          #{{ tag }}
-        </span>
       </div>
 
-      <h3 class="line-clamp-2 text-[16.5px] leading-[1.45] font-bold text-ink">{{ post.title }}</h3>
-      <p v-if="post.description" class="line-clamp-2 text-[13.5px] leading-[1.6] text-ink-3">
+      <p v-if="post.description" class="line-clamp-2 text-[13.5px] leading-[1.7] text-toned">
         {{ post.description }}
       </p>
-
-      <span
-        class="mt-auto flex items-center gap-1 font-mono text-[12px] text-accent-2 transition-colors group-hover:text-accent"
-      >
-        读取数据
-        <Icon name="i-lucide-arrow-right" class="size-4" aria-hidden="true" />
-      </span>
     </div>
   </NuxtLink>
 </template>

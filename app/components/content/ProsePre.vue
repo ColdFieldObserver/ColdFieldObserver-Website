@@ -94,13 +94,14 @@ async function copy(): Promise<void> {
      内部的 sticky 头栏就被困在盒子自己的滚动坐标系里，永远贴不住视口 */
   background: var(--code-bg);
   border: 1px solid var(--line);
+  border-radius: var(--radius-md);
 }
 
 .code-head {
-  /* 长代码块滚动时头栏钉在滚动容器（.site-main）顶部，
+  /* 长代码块滚动时头栏钉在视口顶栏下方（不能是 top:0，会被 sticky 顶栏整个盖住），
      语言与复制按钮始终可点；横向滚动的是内部 <pre>，头栏不受影响 */
   position: sticky;
-  top: 0;
+  top: var(--shell-header-h);
   z-index: 1;
   display: flex;
   align-items: center;
@@ -109,6 +110,7 @@ async function copy(): Promise<void> {
   padding: 6px 12px;
   background: var(--code-hd);
   border-bottom: 1px solid var(--line);
+  border-radius: calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px) 0 0;
 }
 
 .code-lang {
@@ -116,7 +118,7 @@ async function copy(): Promise<void> {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 1.4px;
-  color: var(--accent-2);
+  color: var(--accent-deep);
 }
 
 .code-copy {
@@ -136,7 +138,7 @@ async function copy(): Promise<void> {
 }
 
 .code-copy:hover {
-  color: var(--accent-2);
+  color: var(--accent-deep);
   background: var(--accent-soft);
   border-color: var(--line);
 }
@@ -146,10 +148,12 @@ async function copy(): Promise<void> {
   outline-offset: 2px;
 }
 
-/* 代码块本体：外层的间距与边框由 .code-block 承担 */
+/* 代码块本体：外层的内边距与边框由 .code-block 承担 */
 .code-block pre {
   margin: 0;
+  padding: 14px 16px;
   border: 0;
   background: transparent;
+  border-radius: 0 0 calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px);
 }
 </style>

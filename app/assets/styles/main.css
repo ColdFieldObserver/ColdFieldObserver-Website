@@ -3,22 +3,30 @@
    ------------------------------------------------------------
    硬性顺序：
    1) 所有 @import 必须置顶（CSS 规范）；Tailwind 的两条必须排在项目文件之前，
-      保证 @layer theme / utilities 先被声明。
-   2) 项目局部文件刻意「不进 @layer」：未分层规则的优先级永远高于分层规则，
-      语义类的层叠关系与迁移前一致。工具类只做「增量修饰」——
+      保证 @layer theme / base / utilities 先被声明。
+   2) 引入 Tailwind Preflight（tailwindcss/preflight.css）并落在 @layer base：
+      元素级默认值交给它（标题字号、列表、按钮、表单、img/svg 的 display），
+      base.css 只保留 Preflight 不管的几条（滚动条、图标行内化、标题字重）。
+      Preflight 必须在 base.css 之前导入，同层内后声明者才能覆盖它。
+   3) @nuxt/ui 必须排在 tokens.css 之前：它自带一条只认 .dark 的
+      @custom-variant dark，我们要用自己的三路版本覆盖它（同名变体后声明者生效）。
+   4) 项目局部文件刻意「不进 @layer」：未分层规则的优先级永远高于分层规则，
+      语义类的层叠关系保持一致。工具类只做「增量修饰」——
       加工具类时必须同时删掉语义类里被取代的声明。
-   3) 本文件不出现任何非 @import 语句：@theme / @custom-variant 都在 tokens.css。
-   4) 不引入 Preflight（tailwindcss/preflight.css）：保留 base.css 里项目自己的
-      重置，避免 h1-h6 字号、button / input 默认样式、border-color 默认值变化。
+   5) 本文件不出现任何非 @import 语句：@theme / @custom-variant 都在 tokens.css。
    ============================================================ */
 @layer theme, base, components, utilities;
 
 @import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+/* 只要 theme + base + utilities，不用 `@import "tailwindcss"` 总入口：
+   总入口会把四个层再声明一遍，且顺序不可控。 */
 @import "tailwindcss/utilities.css" layer(utilities);
+
+/* Nuxt UI：主题变量（--ui-*）、组件样式与 keyframes。位置敏感，勿上移。 */
+@import "@nuxt/ui";
 
 @import "./tokens.css";
 @import "./base.css";
-@import "./layout.css";
-@import "./shell.css";
 @import "./prose.css";
 @import "./animation.css";

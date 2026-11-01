@@ -4,9 +4,7 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 // ============================================================
 // 返回顶部浮钮
 // ------------------------------------------------------------
-// 滚动容器是 .site-main（window 不滚动），超过 700px 才出现；
-// 层级 85：在移动端汉堡按钮（80）之上、抽屉遮罩（90）之下，
-// 抽屉打开时会被遮罩自然盖住。
+// 全站只有 window 一条滚动条（body 正常文档流），超过 700px 才出现。
 // 只用颜色 / 边框 / 阴影做 hover 反馈，不做位移。
 // ============================================================
 
@@ -16,12 +14,10 @@ const SHOW_AFTER = 700;
 const shown = ref(false);
 const route = useRoute();
 
-let scroller: HTMLElement | null = null;
 let frame = 0;
 
 function update(): void {
-  if (!scroller) return;
-  shown.value = scroller.scrollTop > SHOW_AFTER;
+  shown.value = window.scrollY > SHOW_AFTER;
 }
 
 function onScroll(): void {
@@ -33,21 +29,13 @@ function onScroll(): void {
 }
 
 function scrollToTop(): void {
-  const target = scroller;
-  if (!target) return;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  try {
-    target.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
-  } catch {
-    target.scrollTop = 0;
-  }
+  window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
   shown.value = false;
 }
 
 onMounted(() => {
-  scroller = document.querySelector<HTMLElement>('.site-main');
-  if (!scroller) return;
-  scroller.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('scroll', onScroll, { passive: true });
   update();
 });
 
@@ -57,8 +45,7 @@ watch(
 );
 
 onBeforeUnmount(() => {
-  scroller?.removeEventListener('scroll', onScroll);
-  scroller = null;
+  window.removeEventListener('scroll', onScroll);
   if (frame) {
     window.cancelAnimationFrame(frame);
     frame = 0;
@@ -95,20 +82,12 @@ onBeforeUnmount(() => {
   background: color-mix(in srgb, var(--card) 72%, transparent);
   border: 1px solid var(--line);
   border-radius: var(--radius-m);
-  box-shadow: 0 10px 30px -18px rgb(0 0 0 / 0.35);
+  box-shadow: var(--shadow-float);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-}
-
-/* 宽屏时右栏固定占 280px，按钮要避开它 */
-@media (min-width: 961px) {
-  .back-to-top {
-    right: calc(280px + 22px);
-    bottom: 24px;
-  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -130,13 +109,13 @@ onBeforeUnmount(() => {
 }
 
 .back-to-top:hover {
-  color: var(--brand-deep);
+  color: var(--accent-deep);
   background: var(--card);
-  border-color: var(--color-brand-deep-a35);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
 .back-to-top:focus-visible {
-  outline: 2px solid var(--color-brand-deep-a35);
+  outline: 2px solid color-mix(in srgb, var(--accent) 35%, transparent);
   outline-offset: 2px;
 }
 </style>

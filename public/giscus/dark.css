@@ -1,42 +1,28 @@
-/* Giscus 自定义主题：冷域机甲蓝（深色） */
 :root {
   color-scheme: dark;
-  --cfo-page: #0b1420;
-  --cfo-surface: #0e1a2a;
-  --cfo-panel: #101d2e;
-  --cfo-inset: #08111c;
-  --cfo-border: #22344b;
-  --cfo-border-soft: #1c2c40;
-  --cfo-text: #d3e6ff;
-  --cfo-muted: #9bb5da;
-  --cfo-subtle: #6b8aa8;
-  --cfo-accent: #2d8cff;
-  --cfo-accent-strong: #5fb0ff;
-  --cfo-accent-soft: rgba(45, 140, 255, 0.12);
-
-  --color-canvas-default: var(--cfo-surface);
+  --color-canvas-default: #0e1a2a;
   --color-canvas-overlay: #15273e;
-  --color-canvas-inset: var(--cfo-inset);
+  --color-canvas-inset: #08111c;
   --color-canvas-subtle: #142438;
-  --color-border-default: var(--cfo-border);
-  --color-border-muted: var(--cfo-border-soft);
-  --color-fg-default: var(--cfo-text);
-  --color-fg-muted: var(--cfo-muted);
-  --color-fg-subtle: var(--cfo-subtle);
-  --color-accent-fg: var(--cfo-accent-strong);
-  --color-accent-emphasis: var(--cfo-accent);
+  --color-border-default: #22344b;
+  --color-border-muted: #1c2c40;
+  --color-fg-default: #d3e6ff;
+  --color-fg-muted: #9bb5da;
+  --color-fg-subtle: #6b8aa8;
+  --color-accent-fg: #5fb0ff;
+  --color-accent-emphasis: #2d8cff;
   --color-accent-muted: rgba(45, 140, 255, 0.32);
   --color-accent-subtle: #12253c;
-  --color-btn-text: var(--cfo-text);
+  --color-btn-text: #d3e6ff;
   --color-btn-bg: #15273e;
   --color-btn-border: #2b3f59;
   --color-btn-hover-bg: #1c3252;
-  --color-btn-hover-border: var(--cfo-accent);
+  --color-btn-hover-border: #2d8cff;
   --color-btn-primary-text: #04101d;
-  --color-btn-primary-bg: var(--cfo-accent);
-  --color-btn-primary-border: var(--cfo-accent);
-  --color-btn-primary-hover-bg: var(--cfo-accent-strong);
-  --color-btn-primary-hover-border: var(--cfo-accent-strong);
+  --color-btn-primary-bg: #2d8cff;
+  --color-btn-primary-border: #2d8cff;
+  --color-btn-primary-hover-bg: #5fb0ff;
+  --color-btn-primary-hover-border: #5fb0ff;
   --color-neutral-muted: rgba(107, 138, 168, 0.22);
   --color-primer-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   --color-primer-shadow-focus: 0 0 0 3px rgba(45, 140, 255, 0.24);
@@ -46,8 +32,8 @@
 
 body,
 .gsc-main {
-  color: var(--cfo-text);
-  background-color: var(--cfo-page);
+  color: #d3e6ff;
+  background-color: #0b1420;
   background-image: linear-gradient(rgba(45, 140, 255, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(45, 140, 255, 0.04) 1px, transparent 1px);
   background-size: 32px 32px;
@@ -55,15 +41,15 @@ body,
 
 .gsc-header {
   padding-bottom: 14px;
-  border-bottom: 1px solid var(--cfo-border);
+  border-bottom: 1px solid #22344b;
 }
 
 .gsc-comment-box,
 .gsc-comment {
-  color: var(--cfo-text);
-  background: var(--cfo-surface);
-  border: 1px solid var(--cfo-border);
-  border-left: 3px solid var(--cfo-accent);
+  color: #d3e6ff;
+  background: #0e1a2a;
+  border: 1px solid #22344b;
+  border-left: 3px solid #2d8cff;
   border-radius: 2px;
   box-shadow: 0 3px 12px rgba(3, 10, 20, 0.2);
 }
@@ -79,7 +65,7 @@ body,
 
 .gsc-comment-header {
   background: #142438;
-  border-color: var(--cfo-border);
+  border-color: #22344b;
 }
 
 .gsc-header,
@@ -87,57 +73,57 @@ body,
 .gsc-comment-reactions,
 .gsc-reply,
 .gsc-comment-box-tabs {
-  border-color: var(--cfo-border);
+  border-color: #22344b;
 }
 
 .gsc-comment-box-textarea,
 .gsc-comment-box-textarea textarea,
 .gsc-comment-box-textarea textarea:focus {
-  color: var(--cfo-text);
-  background: var(--cfo-inset);
+  color: #d3e6ff;
+  background: #08111c;
   border-color: #2b3f59;
   border-radius: 2px;
 }
 
 .gsc-comment-box-textarea textarea::placeholder {
-  color: var(--cfo-subtle);
+  color: #6b8aa8;
 }
 
 .gsc-comment-box-textarea textarea:focus {
-  border-color: var(--cfo-accent);
+  border-color: #2d8cff;
   box-shadow: 0 0 0 3px rgba(45, 140, 255, 0.18);
 }
 
 .gsc-comment-content,
 .gsc-timeline {
-  color: var(--cfo-muted);
+  color: #9bb5da;
 }
 
 .gsc-comment-content blockquote {
-  color: var(--cfo-muted);
-  background: var(--cfo-accent-soft);
-  border-left: 3px solid var(--cfo-accent);
+  color: #9bb5da;
+  background: rgba(45, 140, 255, 0.12);
+  border-left: 3px solid #2d8cff;
 }
 
 .gsc-comment-content code,
 .gsc-comment-content pre {
   color: #b8dcff;
-  background: var(--cfo-inset);
-  border-color: var(--cfo-border);
+  background: #08111c;
+  border-color: #22344b;
 }
 
 .gsc-comment-content pre {
-  border-left: 2px solid var(--cfo-accent);
+  border-left: 2px solid #2d8cff;
 }
 
 .gsc-comment-content hr {
-  background-color: var(--cfo-border);
+  background-color: #22344b;
 }
 
 .gsc-comment-content a,
 .gsc-header a,
 .gsc-footer a {
-  color: var(--cfo-accent-strong);
+  color: #5fb0ff;
 }
 
 .gsc-comment-content a:hover,
@@ -157,6 +143,6 @@ body,
 button:focus-visible,
 a:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid var(--cfo-accent);
+  outline: 2px solid #2d8cff;
   outline-offset: 2px;
 }

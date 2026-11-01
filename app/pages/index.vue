@@ -1,122 +1,289 @@
 <script setup lang="ts">
-import { SITE } from '#shared/site';
-// ============================================================
-// 首页：内容与原站保持一致
-//   驾驶舱概览 → 站点模块 → 蛋仔派对 ID → 关于这个站点
-// ============================================================
+import { computed } from 'vue';
+import { SITE, TOOL_LINKS } from '#shared/site';
+import { AVATAR, GAME_IDS, HERO_INTRO, PROJECTS, SITE_NOTE } from '~/data/home';
+import { PERSONAL_PROFILE, SOCIAL_LINKS, TIMELINE } from '~/data/profile';
+import { latestPosts, useAllPosts } from '~/composables/usePosts';
 
-const EGGY_IDS = [
-  { file: 'https://img.remit.ee/i/Kqi2hJUbtHeH', name: '实况主灯塔', note: '大号' },
-  { file: 'https://img.remit.ee/i/v7QTWcHyx1t0', name: '翌测', note: '小号' },
-];
+// ============================================================
+// 首页：Hero → 关于我 / 身份主线 → 最新文章 → 我的项目
+//       → 我的游戏 ID → 工具矩阵 → 关于这个站点
+// 「最新文章」「个人档案」「工具矩阵」原在右侧栏，右栏移除后搬到这里。
+// ============================================================
+const allPosts = useAllPosts();
+const latest = computed(() => latestPosts(allPosts.value, 3));
 
-const MODULES = [
-  { label: '日志终端', desc: '按时间归档的全部记录', to: '/archives/', code: 'ARCHIVE' },
-  { label: '工具矩阵', desc: 'Base64 / Unicode / 时间戳 / URL', to: '/tools/', code: 'TOOLS' },
-  { label: 'RSS 订阅', desc: '用阅读器跟踪更新', to: '/atom.xml', code: 'FEED' },
-];
+/** 工具矩阵：桌面一行四张卡，取前四个代表作 */
+const TOOL_FEATURED = TOOL_LINKS.slice(0, 4);
+
+/**
+ * 「我的游戏 ID」的跑马灯阈值：超过 5 张卡才滚动。
+ * 只有两三个号时静止横排即可，滚动反而让人看不清名字。
+ */
+const ID_MARQUEE_MIN = 5;
+const idMarqueeActive = computed(() => GAME_IDS.length > ID_MARQUEE_MIN);
 
 useHead({ title: SITE.title });
 </script>
 
 <template>
   <div class="mx-auto max-w-page">
-    <!-- 驾驶舱概览 -->
-    <section class="mb-8 grid gap-5">
-      <div class="mecha-clip-l relative border border-line bg-panel px-7 py-8">
-        <p class="font-mono text-[11.5px] tracking-[2px] text-accent-2">
-          // COLDFIELD OBSERVER · PERSONAL TERMINAL
-        </p>
-        <h1
-          class="mt-3 text-[clamp(26px,4.5vw,38px)] leading-[1.25] font-extrabold tracking-[1px] text-ink"
-        >
-          欢迎来到冷域观者的个人网站！
-        </h1>
-        <div class="mt-4 flex flex-col gap-3 text-[14.5px] leading-[1.85] text-ink-2">
-          <p>
-            我是冷域观者，一个逃跑吧少年和蛋仔派对玩家，偶尔也玩我的世界、PVZ2
-            和保卫萝卜4，同时还是逃少音乐档案馆的主理人。
-          </p>
-          <p>
-            曾用名 AsyncObserver、蛋仔派对远航蛋、主唱耀星_Eggy、UNI-航行的灯塔、TP-RLX-LIGHT
-            等，喜欢数码和技术。我也接触过编程，C、C++、C#、Python、HTML、CSS、JavaScript
-            都懂一点，有时候也会试着用别的语言重构几个易语言项目玩玩（易语言的缺点你们懂的）。
-          </p>
-          <p>这里是我的个人网站。当然我不在这里发博文，就提供一些工具和资源导航。</p>
-        </div>
+    <!-- 1. Hero：圆形头像 + 标题 + 简介 + 社交按钮 -->
+    <section class="hero-grid -mx-4 px-4 py-10 text-center sm:-mx-6 sm:px-6 lg:py-14">
+      <img
+        class="mx-auto size-28 rounded-full object-cover ring-4 ring-primary/15 lg:size-32"
+        :src="AVATAR"
+        alt="冷域观者的头像"
+        width="512"
+        height="512"
+        decoding="async"
+        fetchpriority="high"
+      />
+      <h1 class="mx-auto mt-6 max-w-[22em] text-[clamp(26px,4.6vw,40px)] leading-[1.2] font-extrabold tracking-tight text-highlighted">
+        欢迎来到冷域观者的个人网站
+      </h1>
+      <p class="mx-auto mt-4 max-w-[620px] text-[15.5px] leading-[1.9] text-toned">
+        {{ HERO_INTRO }}
+      </p>
 
-        <div class="mt-6 flex flex-wrap gap-3">
-          <NuxtLink class="mecha-btn primary" to="/posts/">进入日志终端</NuxtLink>
-          <NuxtLink class="mecha-btn" to="/tools/">打开工具矩阵</NuxtLink>
-        </div>
+      <div class="mt-6 flex flex-wrap items-center justify-center gap-2.5">
+        <UButton
+          v-for="link in SOCIAL_LINKS"
+          :key="link.url"
+          :to="link.url"
+          target="_blank"
+          rel="noopener"
+          :icon="link.icon"
+          :label="link.name"
+          size="lg"
+          :variant="link.name === 'GitHub' ? 'outline' : 'solid'"
+          :color="link.name === 'GitHub' ? 'neutral' : 'primary'"
+        />
       </div>
-
     </section>
 
-    <!-- 站点模块 -->
-    <section class="mb-8">
-      <h2 class="mecha-title mb-4">站点模块</h2>
-      <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
-        <NuxtLink
-          v-for="item in MODULES"
-          :key="item.to"
-          class="group mecha-clip-s relative flex flex-col gap-1.5 border border-line bg-card px-4 py-4 transition-colors hover:border-edge hover:bg-accent-soft"
-          :to="item.to"
-        >
-          <span class="font-mono text-[10.5px] tracking-[1.6px] text-ink-3">{{ item.code }}</span>
-          <span class="flex items-center gap-2 text-[15.5px] font-semibold text-ink">
-            {{ item.label }}
-            <Icon
-              name="i-lucide-arrow-right"
-              class="size-4 text-accent-2 transition-colors group-hover:text-accent"
+    <!-- 2. 关于我 / 身份主线经历 -->
+    <section class="mt-4 grid gap-6 lg:grid-cols-2">
+      <UCard>
+        <template #header>
+          <h2 class="flex items-center gap-2 text-lg font-bold text-highlighted">
+            <UIcon name="i-lucide-info" class="size-5 text-primary" aria-hidden="true" />
+            关于我
+          </h2>
+        </template>
+        <ul class="flex flex-col gap-3">
+          <li v-for="line in PERSONAL_PROFILE" :key="line" class="flex gap-2 text-sm leading-[1.8] text-toned">
+            <UIcon
+              name="i-lucide-chevron-right"
+              class="mt-1 size-4 shrink-0 text-primary"
+              aria-hidden="true"
             />
-          </span>
-          <span class="text-[13px] leading-[1.6] text-ink-3">{{ item.desc }}</span>
-        </NuxtLink>
-      </div>
+            <span>{{ line }}</span>
+          </li>
+        </ul>
+      </UCard>
+
+      <UCard>
+        <template #header>
+          <h2 class="flex items-center gap-2 text-lg font-bold text-highlighted">
+            <UIcon name="i-lucide-tags" class="size-5 text-primary" aria-hidden="true" />
+            身份主线经历
+          </h2>
+        </template>
+        <UTimeline :items="TIMELINE" size="sm" />
+      </UCard>
     </section>
 
-    <!-- 我的蛋仔派对 ID -->
-    <section class="mb-8">
-      <h2 class="mecha-title mb-4">我的蛋仔派对ID</h2>
-      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <figure
-          v-for="item in EGGY_IDS"
-          :key="item.file"
-          class="mecha-clip-s m-0 border border-line bg-card p-3"
+    <!-- 3. 最新博客文章 -->
+    <UPageSection
+      class="mt-12"
+      title="最新博客文章"
+      description="不定时更新的记录、折腾与归档。"
+      :ui="{ container: 'py-0! gap-5' }"
+    >
+      <CardGrid :posts="latest" empty-text="暂无文章" />
+      <template #footer>
+        <div class="flex justify-center">
+          <UButton to="/posts/" size="lg" trailing-icon="i-lucide-arrow-right" label="查看全部文章" />
+        </div>
+      </template>
+    </UPageSection>
+
+    <!-- 4. 我的项目 -->
+    <UPageSection
+      class="mt-12"
+      title="我的项目"
+      description="长期在维护的两个站点。"
+      :ui="{ container: 'py-0! gap-5' }"
+    >
+      <UPageGrid style="--grid-min: 280px">
+        <UPageCard
+          v-for="project in PROJECTS"
+          :key="project.name"
+          :icon="project.icon"
+          :title="project.name"
+          :description="project.description"
+          variant="outline"
+          spotlight
         >
-          <a
-            class="block overflow-hidden border border-line bg-accent-soft"
-            :href="item.file"
-            target="_blank"
-            rel="noopener"
-          >
-            <img
-              :src="item.file"
-              :alt="`我的蛋仔派对${item.note}`"
-              loading="lazy"
-              class="w-full transition-transform duration-300 hover:scale-[1.02]"
-            />
-          </a>
-          <figcaption class="mt-2.5 flex items-center gap-2">
-            <span class="mecha-tag text-[11px]">{{ item.note }}</span>
-            <span class="text-[13.5px] text-ink-2">{{ item.name }}</span>
-          </figcaption>
-        </figure>
-      </div>
-    </section>
+          <template #footer>
+            <div class="flex flex-wrap items-center gap-3">
+              <UButton
+                :to="project.to"
+                target="_blank"
+                rel="noopener"
+                variant="link"
+                trailing-icon="i-lucide-arrow-up-right"
+                :label="`打开 ${project.name}`"
+                :padded="false"
+              />
+              <!-- 目前不需要 extra 链接，所以注释掉
+              <UButton
+                v-if="project.extra"
+                :to="project.extra.to"
+                target="_blank"
+                rel="noopener"
+                variant="link"
+                color="neutral"
+                :label="project.extra.label"
+                :padded="false"
+              />
+              -->
+            </div>
+          </template>
+        </UPageCard>
+      </UPageGrid>
+    </UPageSection>
 
-    <!-- 关于这个站点 -->
-    <section class="mb-2">
-      <h2 class="mecha-title mb-4">关于这个站点</h2>
-      <div class="mecha-clip-s border border-line bg-card p-6 text-[14.5px] leading-[1.9] text-ink-2">
-        <p>
-          这个网站的框架是用AI搭的，我只负责内容填充。不过，说句实话，如果我不给复杂的提示词，AI也生成不出来这种“风格缝合怪”的网站。<del
-            class="text-ink-3"
-            >另外，AI总是喜欢把HTML代码和CSS、JS代码写一块，即使我特意说明分离也是如此。</del
-          >最终思考权还是在人类手中。
-        </p>
+    <!-- 5. 我的游戏 ID：够多才跑马灯，否则静态横排 -->
+    <UPageSection
+      class="mt-12"
+      title="我的游戏 ID"
+      description="欢迎和我一起组队。"
+      :ui="{ container: 'py-0! gap-5' }"
+    >
+      <!-- 与 PidanUI 官网同一套规则：超过 5 张卡才滚动。
+           卡片少的时候跑马灯只会让人看不清名字，还会把留白变成空白跑道。 -->
+      <UMarquee v-if="idMarqueeActive" :repeat="2" pause-on-hover :overlay="false" class="id-marquee">
+        <GameIdCard v-for="item in GAME_IDS" :key="item.name" :item="item" />
+      </UMarquee>
+
+      <!-- 不滚时仍是横向列表：可聚焦，键盘用户才能横向看全 -->
+      <div
+        v-else
+        class="id-scroller"
+        role="region"
+        tabindex="0"
+        aria-label="我的游戏 ID，可横向滚动"
+      >
+        <GameIdCard v-for="item in GAME_IDS" :key="item.name" :item="item" />
       </div>
-    </section>
+    </UPageSection>
+
+    <!-- 6. 工具矩阵：只展示三个代表 -->
+    <UPageSection
+      class="mt-12"
+      title="工具矩阵"
+      description="纯前端运行，数据不上传服务器。"
+      :ui="{ container: 'py-0! gap-5' }"
+    >
+      <UPageGrid style="--grid-min: 250px">
+        <UPageCard
+          v-for="tool in TOOL_FEATURED"
+          :key="tool.slug"
+          :to="`/tools/${tool.slug}`"
+          icon="i-lucide-wrench"
+          :title="tool.name"
+          :description="tool.desc"
+          variant="outline"
+          spotlight
+        />
+      </UPageGrid>
+      <template #footer>
+        <div class="flex justify-center">
+          <UButton to="/tools/" variant="soft" color="neutral" label="更多工具" trailing-icon="i-lucide-arrow-right" />
+        </div>
+      </template>
+    </UPageSection>
+
+    <!-- 7. 关于这个站点 -->
+    <UPageSection
+      class="mt-12 mb-4"
+      title="关于这个站点"
+      description="有关这个站点背后的一些故事。"
+      :ui="{ container: 'py-0! gap-5' }"
+    >
+      <UCard>
+        <div class="flex flex-col gap-3 text-[15px] leading-[1.9] text-toned">
+          <p v-for="(seg, index) in SITE_NOTE" :key="index">{{ seg }}</p>
+        </div>
+        <template #footer>
+          <div class="flex flex-wrap items-center gap-2">
+            <UButton
+              to="https://github.com/ColdFieldObserver/coldfieldobserver.github.io"
+              target="_blank"
+              rel="noopener"
+              variant="ghost"
+              color="neutral"
+              icon="i-simple-icons-github"
+              label="站点源代码"
+            />
+          </div>
+        </template>
+      </UCard>
+    </UPageSection>
   </div>
 </template>
+
+<style scoped>
+/* Hero 区域的网格底纹：机甲时代留下的唯一一处纹理，只在这里用。
+   网格画在 ::before 上而不是 section 自身的 background 上：
+   mask-image 会作用于元素**及其全部后代**，直接给 section 加 mask 会让
+   底部的社交按钮跟着网格一起淡出（表现为按钮被一层渐变「盖住」）。
+   拆成伪元素后，淡出只影响背景，内容永远是不透明的。 */
+.hero-grid {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-grid::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 36px 36px;
+  background-position: center;
+  /* 四边淡出，避免网格在区块边界被硬切 */
+  mask-image: radial-gradient(120% 100% at 50% 0%, #000 45%, transparent 100%);
+  content: '';
+  pointer-events: none;
+}
+
+/* UMarquee 默认 gap 是 64px、一圈 20s；这里与卡片间距对齐并放慢 */
+.id-marquee {
+  --gap: 16px;
+  --duration: 40s;
+}
+
+/* 卡片不足 6 张时的静止形态：可手动横向滑，滑动停在卡片边界 */
+.id-scroller {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  padding: 2px 2px 12px;
+}
+
+.id-scroller > * {
+  scroll-snap-align: start;
+}
+
+.id-scroller:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+</style>

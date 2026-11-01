@@ -76,7 +76,6 @@ export function countYears(): number {
 export function buildRoutes(): string[] {
   const routes = [
     '/',
-    '/about',
     '/search/',
     '/posts/',
     '/archives/',

@@ -3,7 +3,6 @@ import { withSiteSuffix } from '#shared/utils/title';
 
 // ============================================================
 // 全局标题模板：所有页面标题统一补「· 冷域观者的个人网站」后缀
-//   VitePress 时期由 titleTemplate 自动完成，Nuxt 需要显式注册。
 //   已含站点全名的标题（首页）不会重复追加，见 withSiteSuffix。
 // ============================================================
 useHead({
@@ -12,7 +11,10 @@ useHead({
 </script>
 
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
+  <!-- UApp 提供 Toast / Tooltip / 程序化浮层的容器，必须是应用根节点 -->
+  <UApp>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </UApp>
 </template>

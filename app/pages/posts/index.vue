@@ -11,15 +11,15 @@ const { pagePosts, totalPages, page } = usePagedPosts(
 );
 
 const summary = computed(
-  () => `共 ${all.value.length} 篇日志 · 第 ${page.value} / ${totalPages.value} 页`,
+  () => `共 ${all.value.length} 篇文章 · 第 ${page.value} / ${totalPages.value} 页`,
 );
 
-useHead({ title: '博客日志' });
+useHead({ title: '博客文章' });
 </script>
 
 <template>
   <ListPage
-    title="博客日志"
+    title="博客文章"
     :summary="summary"
     :posts="pagePosts"
     :current="page"
@@ -28,6 +28,6 @@ useHead({ title: '博客日志' });
     page-prefix="/posts/page/"
     show-chips
     show-search
-    empty-text="还没有日志"
+    empty-text="还没有文章"
   />
 </template>

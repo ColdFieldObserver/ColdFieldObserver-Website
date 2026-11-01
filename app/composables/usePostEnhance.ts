@@ -1,21 +1,47 @@
 import { nextTick } from 'vue';
 import { initTheme } from '~/composables/useTheme';
-import { prefersReducedMotion, revealPassed } from '~/composables/useScrollReveal';
 
 // ============================================================
 // 文章页客户端增强
-//   1. [TOC] 目录：读取正文中已渲染的标题 id，生成可跳转目录
-//   2. 页内锚点滚动：目录 / 脚注 / 标题锚点跳转时滚动对应的页面容器
-//   3. 代码块的语言标签与复制按钮：由 components/content/ProsePre.vue 自己负责
-//      （不再在这里用 VitePress 时代的 button.copy 选择器去猜 DOM）
-// Mermaid 渲染已按参考站的做法移除：图表改用静态图片或外链，
-// 避免整包 mermaid（数百 KB）在客户端从 CDN 加载。
-// 以上均依赖渲染后的真实 DOM，只能运行在浏览器端，且都是渐进增强。
+//   1. [TOC] 目录：只有作者显式写了 [TOC] 的文章才生成目录
+//   2. 页内锚点滚动：统一走 window，偏移交给 CSS 的 scroll-padding-top
+//   3. 代码块的语言标签与复制按钮由 components/content/ProsePre.vue 自己负责
+// 以上均依赖渲染后的真实 DOM，只能跑在浏览器端，且都是渐进增强。
 // ============================================================
 
 // ---- [TOC] 目录 ----
+
+/**
+ * `[TOC]` 在 Markdown 里只是一段普通文本（MDC 会把方括号当链接语法吞掉，
+ * 最终渲染成 <p><span>TOC</span></p> 或 <p>[TOC]</p>）。
+ * 这里在客户端把它换成占位容器，再统一填充。
+ *
+ * 刻意「不自动生成」：短文章被塞一块没有信息量的目录反而碍事，
+ * 因此页面里不再放固定目录容器，位置的唯一来源就是作者写的 [TOC]。
+ */
+function mountTocPlaceholder(): void {
+  if (typeof document === 'undefined') return;
+  const content = document.querySelector('.post-content');
+  if (!content) return;
+
+  // 同时接受 [TOC] / [[TOC]] / 被 MDC 吞掉方括号后只剩 TOC 的形态
+  const TOC_PATTERN = /^\[{0,2}toc\]{0,2}$/i;
+
+  for (const paragraph of Array.from(content.querySelectorAll<HTMLParagraphElement>('p'))) {
+    const text = (paragraph.textContent ?? '').replace(/\u200b/g, '').trim();
+    if (!TOC_PATTERN.test(text)) continue;
+    const box = document.createElement('div');
+    box.className = 'post-toc';
+    box.dataset.postToc = '';
+    paragraph.replaceWith(box);
+  }
+}
+
 function fillToc(): void {
   if (typeof document === 'undefined') return;
+
+  mountTocPlaceholder();
+
   const placeholders = document.querySelectorAll<HTMLElement>('[data-post-toc]');
   if (!placeholders.length) return;
 
@@ -26,7 +52,7 @@ function fillToc(): void {
   const wrap = document.createElement('div');
   const title = document.createElement('p');
   title.className = 'post-toc-title';
-  title.textContent = '// 目录';
+  title.textContent = '目录';
   wrap.appendChild(title);
 
   const list = document.createElement('ul');
@@ -50,20 +76,15 @@ function fillToc(): void {
 }
 
 // ---- 页内锚点滚动 ----
-const ANCHOR_OFFSET = 24;
-const SETTLE_WINDOW = 2000;
+// 滚动权在 window，偏移由 base.css 的 html{scroll-padding-top} 统一提供，
+// 这里不再自己算 header 高度（JS 与 CSS 各写一份必然漂移）。
 
-let anchorBound = false;
 /** 自建 hash 跳转后的一小段时间内忽略 hashchange，避免重复滚动 */
 let suppressHashChangeUntil = 0;
-let settleObserver: ResizeObserver | null = null;
-let settleHash = '';
-let settleDeadline = 0;
+let anchorBound = false;
 
 function alignToAnchor(hash: string, smooth: boolean): boolean {
   if (typeof document === 'undefined' || !hash || hash === '#') return false;
-  const scroller = document.querySelector<HTMLElement>('.site-main');
-  if (!scroller) return false;
   let id = hash.slice(1);
   try {
     id = decodeURIComponent(id);
@@ -72,53 +93,13 @@ function alignToAnchor(hash: string, smooth: boolean): boolean {
   }
   const target = document.getElementById(id);
   if (!target) return false;
-  const behavior = smooth && !prefersReducedMotion() ? 'smooth' : 'auto';
-  if (window.matchMedia('(max-width: 1024px)').matches) {
-    const headerHeight = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0;
-    const top = target.getBoundingClientRect().top + window.scrollY - headerHeight - ANCHOR_OFFSET;
-    window.scrollTo({ top: Math.max(0, top), behavior });
-  } else {
-    const top =
-      target.getBoundingClientRect().top -
-      scroller.getBoundingClientRect().top +
-      scroller.scrollTop -
-      ANCHOR_OFFSET;
-    scroller.scrollTo({ top: Math.max(0, top), behavior });
-  }
-  if (behavior === 'auto') revealPassed();
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  target.scrollIntoView({ behavior: smooth && !reduce ? 'smooth' : 'auto', block: 'start' });
   return true;
 }
 
-/**
- * 跳转后的一小段时间内，若正文高度仍有变化（Mermaid、图片等迟到布局），
- * 目标会被顶偏，这里重新对齐一次。
- */
-function watchAnchorSettle(hash: string): void {
-  settleObserver?.disconnect();
-  settleObserver = null;
-  if (typeof window === 'undefined' || typeof ResizeObserver === 'undefined') return;
-  const root = document.querySelector<HTMLElement>('.post-content');
-  if (!root) return;
-  settleHash = hash;
-  settleDeadline = Date.now() + SETTLE_WINDOW;
-  let lastHeight = root.offsetHeight;
-  const observer = new ResizeObserver(() => {
-    const height = root.offsetHeight;
-    if (height === lastHeight) return;
-    lastHeight = height;
-    if (Date.now() > settleDeadline) {
-      observer.disconnect();
-      return;
-    }
-    alignToAnchor(settleHash, false);
-  });
-  settleObserver = observer;
-  observer.observe(root);
-}
-
 function scrollToAnchor(hash: string, smooth = true): void {
-  if (!alignToAnchor(hash, smooth)) return;
-  watchAnchorSettle(hash);
+  alignToAnchor(hash, smooth);
 }
 
 function bindAnchorScroll(): void {
@@ -134,47 +115,47 @@ function bindAnchorScroll(): void {
     const hash = link.getAttribute('href') ?? '';
     if (!hash || hash === '#') return;
 
-    // 关键：先阻止浏览器的默认 hash 跳转。
-    // 默认跳转会把 .site-main 直接滚到元素顶部（不带头部偏移），
-    // 紧接着我们的 alignToAnchor 再按 24px 偏移滚一次，
-    // 两次滚动叠加就会让正文容器整体偏掉一截。
+    // 先阻止浏览器的默认 hash 跳转：默认跳转不带 scroll-padding 之外的
+    // 任何偏移控制，紧接着手动滚一次会叠加成「跳过头」
     event.preventDefault();
 
-    // 用 replaceState 写 hash：不触发 hashchange，避免第二次重复滚动
+    // replaceState 写 hash：不触发 hashchange，避免第二次重复滚动。
+    // 必须保留 vue-router 的 state，裸调用会把它覆盖掉。
     suppressHashChangeUntil = performance.now() + 150;
     try {
-      history.replaceState(null, '', hash);
+      history.replaceState(history.state, '', hash);
     } catch {
-      // 忽略：history API 不可用时仍继续手动滚动
+      // history API 不可用时仍继续手动滚动
     }
     scrollToAnchor(hash);
   });
 
   window.addEventListener('hashchange', () => {
-    // 上面 replaceState 之后浏览器不会再派发 hashchange；
-    // 这里只处理外部直接改地址栏 / 手动点击原生锚点的情况
     if (performance.now() < suppressHashChangeUntil) return;
     scrollToAnchor(window.location.hash);
+  });
+
+  // 跨页带 hash 跳转：新页 DOM 就绪后由 layout 在 page:finish 里派发
+  document.addEventListener('cfo:anchor', (event) => {
+    const hash = (event as CustomEvent<string>).detail;
+    if (hash) scrollToAnchor(hash, false);
   });
 }
 
 // ---- 文章入口 ----
-let lastRoute = '';
 
 /**
  * 文章页挂载 / 路由切换后调用。
  *
  * 只做三件事：填目录、绑定锚点滚动、按 hash 精确对齐。
- * 代码块的语言标签与复制按钮由 components/content/ProsePre.vue 自行负责，
- * Mermaid 渲染按参考站的做法已移除（图表改用静态图片或外链）。
  *
- * @param routeKey 当前文章标识（如 /posts/<slug>），变化时重置内部缓存
+ * @param routeKey 当前文章标识（如 /posts/<slug>）
  */
 export async function enhancePost(routeKey: string): Promise<void> {
   if (typeof document === 'undefined') return;
+  void routeKey;
   initTheme();
   bindAnchorScroll();
-  lastRoute = routeKey;
   await nextTick();
   fillToc();
   scrollToAnchor(window.location.hash, false);

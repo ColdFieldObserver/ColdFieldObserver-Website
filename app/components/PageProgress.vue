@@ -31,9 +31,18 @@ defineProps<{
   z-index: 1001;
   opacity: 0;
   pointer-events: none;
-  border-radius: 0 2px 2px 0;
-  background: linear-gradient(90deg, var(--brand), var(--brand-deep), #ff7a00);
-  box-shadow: 0 0 12px rgba(255, 159, 26, 0.35);
+  border-radius: 0 999px 999px 0;
+  /* 颜色只用站点 accent 系：旧实现引用的 --brand / --brand-deep 在本项目
+     根本不存在，整条 background 会算成 invalid → 进度条完全透明。 */
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--accent) 55%, transparent),
+    var(--accent) 45%,
+    var(--accent-deep)
+  );
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 35%, transparent),
+    0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
   transition: width 0.25s ease, opacity 0.4s ease;
 }
 

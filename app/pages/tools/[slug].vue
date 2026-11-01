@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { TOOL_LINKS } from '#shared/site';
+import { EGGY_EXAMPLE, useEggyPartyMapText } from '~/composables/useEggyPartyMapText';
 
-// 5 个纯前端小工具：输入 → 实时结果，一键复制
+// ============================================================
+// 工具页：输入 -> 操作 -> 结果
+// ------------------------------------------------------------
+// 操作区一律放在输入框**下面**（先填内容再选动作，符合阅读顺序）：
+//   · 编解码类工具：编码 / 解码是「模式」，切换后结果实时重算；
+//   · 蛋仔地图文案：处理 / 短视频文案是一次性动作，结果不随输入实时变化
+//     （文案里有随机成分，实时重算会让结果在打字时不断跳动）。
+// ============================================================
 const route = useRoute();
 const slug = computed(() => String(route.params.slug ?? ''));
 const tool = computed(() => TOOL_LINKS.find((item) => item.slug === slug.value));
@@ -11,11 +19,26 @@ if (!tool.value) {
   throw createError({ statusCode: 404, statusMessage: '工具不存在', fatal: true });
 }
 
+/** 每个工具的示例输入：既是输入框的 placeholder，也是「加载示例」填进去的内容 */
+const EXAMPLES: Record<string, string> = {
+  base64: '你好，蛋仔派对！',
+  unicode: '你好，蛋仔派对！',
+  timestamp: '1793461870',
+  url: 'https://pidanui.eggycore.top/posts/?q=蛋仔派对',
+  'eggyparty-map-text': EGGY_EXAMPLE,
+};
+
+const example = computed(() => EXAMPLES[slug.value] ?? '');
+
 const input = ref('');
 const mode = ref<'encode' | 'decode'>('encode');
 const copied = ref(false);
 
-const output = computed(() => {
+const isEggy = computed(() => slug.value === 'eggyparty-map-text');
+const eggy = useEggyPartyMapText();
+
+/** 编解码类工具的实时结果；蛋仔地图文案走「点按钮才算」 */
+const liveOutput = computed(() => {
   const text = input.value;
   if (!text.trim()) return '';
   try {
@@ -45,11 +68,6 @@ const output = computed(() => {
         if (Number.isNaN(date.getTime())) return '无法解析该时间';
         return `秒  ：${Math.floor(date.getTime() / 1000)}\n毫秒：${date.getTime()}`;
       }
-      case 'eggyparty-map-text': {
-        const id = text.match(/\d{6,}/)?.[0] ?? '';
-        const name = text.match(/地图[:：]\s*(\S+)/)?.[1] ?? text.split('\n')[0]?.slice(0, 24) ?? '';
-        return `地图：${name}\n地图 ID：${id || '（未识别）'}\n\n复制 ID 在游戏内「地图工坊 - 搜索」中粘贴即可进入。`;
-      }
       default:
         return '';
     }
@@ -58,6 +76,8 @@ const output = computed(() => {
   }
 });
 
+const output = computed(() => (isEggy.value ? eggy.result.value : liveOutput.value));
+
 const MODES: Record<string, [string, string] | null> = {
   base64: ['编码', '解码'],
   unicode: ['文本 → 码点', '码点 → 文本'],
@@ -65,6 +85,23 @@ const MODES: Record<string, [string, string] | null> = {
   timestamp: null,
   'eggyparty-map-text': null,
 };
+
+/** 切工具时清空上一条结果，避免两个工具的内容串在一起 */
+watch(slug, () => {
+  input.value = '';
+  mode.value = 'encode';
+  eggy.reset();
+});
+
+function loadExample(): void {
+  input.value = example.value;
+  eggy.reset();
+}
+
+function clear(): void {
+  input.value = '';
+  eggy.reset();
+}
 
 async function copy(): Promise<void> {
   if (!output.value) return;
@@ -82,53 +119,70 @@ useHead({ title: computed(() => tool.value?.name ?? '工具') });
 
 <template>
   <div class="mx-auto max-w-page">
-    <header class="mb-6 border-b border-line pb-4">
-      <h1 class="mecha-title">{{ tool?.name }}</h1>
-      <p class="mt-2 text-[13px] text-ink-3">{{ tool?.desc }}</p>
+    <header class="mb-6 border-b border-default pb-5">
+      <h1 class="text-[clamp(24px,3.4vw,32px)] font-extrabold tracking-tight text-highlighted">
+        {{ tool?.name }}
+      </h1>
+      <p class="mt-1.5 text-sm text-dimmed">{{ tool?.desc }}</p>
     </header>
 
-    <div class="mecha-clip-s border border-line bg-card p-5">
-      <div v-if="MODES[slug]" class="mb-4 flex gap-2">
-        <button
-          v-for="(label, index) in MODES[slug]"
-          :key="label"
-          class="mecha-clip-s border px-3.5 py-1.5 font-mono text-[12.5px] transition-colors"
-          :class="
-            (index === 0 ? 'encode' : 'decode') === mode
-              ? 'border-accent bg-accent text-on-accent'
-              : 'border-line bg-panel text-ink-2 hover:border-edge hover:bg-accent-soft'
-          "
-          type="button"
-          @click="mode = index === 0 ? 'encode' : 'decode'"
-        >
-          {{ label }}
-        </button>
-      </div>
-
-      <label class="mb-2 block font-mono text-[11.5px] tracking-[1px] text-ink-3">
+    <UCard>
+      <label class="mb-2 block text-xs font-medium text-dimmed">
         {{ slug === 'timestamp' ? '时间戳或日期时间（如 2026-10-25 10:00:00）' : '输入' }}
       </label>
       <textarea
         v-model="input"
         rows="6"
-        class="w-full resize-y border border-line bg-bg p-3 font-mono text-[13px] text-ink outline-none focus:border-accent"
-        placeholder="在此输入…"
+        class="w-full resize-y rounded-lg border border-default bg-muted p-3 font-mono text-[13px] text-default outline-none transition-colors focus:border-primary"
+        :placeholder="example ? `示例：${example}` : '在此输入…'"
       />
 
-      <div class="mt-4 mb-2 flex items-center justify-between">
-        <span class="font-mono text-[11.5px] tracking-[1px] text-ink-3">结果</span>
-        <button
-          class="font-mono text-[11.5px] text-accent-2 transition-colors hover:text-accent disabled:opacity-40"
-          type="button"
+      <!-- 操作区：都在输入框下面 -->
+      <div class="mt-3 flex flex-wrap items-center gap-2">
+        <template v-if="isEggy">
+          <UButton size="sm" label="处理文本" @click="eggy.process(input)" />
+          <UButton
+            size="sm"
+            variant="soft"
+            label="处理文本为短视频文案"
+            @click="eggy.process(input, true)"
+          />
+          <UButton size="sm" variant="outline" color="neutral" label="加载示例" @click="loadExample" />
+          <UButton size="sm" variant="ghost" color="neutral" label="清空" @click="clear" />
+        </template>
+
+        <template v-else>
+          <UButton
+            v-for="(label, index) in MODES[slug] ?? []"
+            :key="label"
+            :variant="(index === 0 ? 'encode' : 'decode') === mode ? 'solid' : 'outline'"
+            :color="(index === 0 ? 'encode' : 'decode') === mode ? 'primary' : 'neutral'"
+            size="sm"
+            :label="label"
+            @click="mode = index === 0 ? 'encode' : 'decode'"
+          />
+          <UButton size="sm" variant="ghost" color="neutral" label="加载示例" @click="loadExample" />
+        </template>
+      </div>
+
+      <div class="mt-5 mb-2 flex items-center justify-between">
+        <span class="text-xs font-medium text-dimmed">
+          结果
+          <span v-if="isEggy && eggy.resultType.value === 'error'" class="ml-1 text-error">（未识别）</span>
+        </span>
+        <UButton
+          variant="ghost"
+          color="neutral"
+          size="xs"
           :disabled="!output"
+          :label="copied ? '已复制' : '复制结果'"
+          :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
           @click="copy"
-        >
-          {{ copied ? '已复制 ✓' : '复制结果' }}
-        </button>
+        />
       </div>
       <pre
-        class="min-h-[92px] overflow-x-auto border border-line bg-bg p-3 font-mono text-[13px] whitespace-pre-wrap text-ink-2"
-      >{{ output || '（结果会实时显示在这里）' }}</pre>
-    </div>
+        class="min-h-[92px] overflow-x-auto rounded-lg border border-default bg-muted p-3 font-mono text-[13px] whitespace-pre-wrap text-toned"
+      >{{ output || (isEggy ? '填写上面的分享文本，再点「处理文本」' : '（结果会实时显示在这里）') }}</pre>
+    </UCard>
   </div>
 </template>

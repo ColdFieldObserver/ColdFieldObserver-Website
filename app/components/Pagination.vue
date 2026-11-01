@@ -16,28 +16,35 @@ const prevHref = computed(() =>
   props.current <= 2 ? props.firstHref : `${props.pagePrefix}${props.current - 1}`,
 );
 const nextHref = computed(() => `${props.pagePrefix}${props.current + 1}`);
-
-const BTN_CLASS =
-  'mecha-clip-s border border-line bg-panel px-5 py-[7px] font-mono text-[12.5px] tracking-[0.5px] text-ink-2 transition-colors hover:border-accent hover:bg-accent hover:text-on-accent';
 </script>
 
 <template>
   <nav
     v-if="totalPages > 1"
-    class="mt-8 flex items-center justify-center gap-3.5"
+    class="mt-8 flex items-center justify-center gap-3"
     role="navigation"
     aria-label="分页导航"
   >
-    <NuxtLink v-if="current > 1" :class="BTN_CLASS" :to="prevHref">← 上一页</NuxtLink>
-    <span v-else class="mecha-clip-s border border-line px-5 py-[7px] font-mono text-[12.5px] text-ink-3 opacity-60">
-      ← 上一页
-    </span>
+    <UButton
+      v-if="current > 1"
+      :to="prevHref"
+      variant="outline"
+      color="neutral"
+      icon="i-lucide-chevron-left"
+      label="上一页"
+    />
+    <UButton v-else variant="outline" color="neutral" icon="i-lucide-chevron-left" label="上一页" disabled />
 
-    <span class="font-mono text-[12.5px] text-ink-3">{{ current }} / {{ totalPages }}</span>
+    <span class="px-1 text-sm text-dimmed">{{ current }} / {{ totalPages }}</span>
 
-    <NuxtLink v-if="current < totalPages" :class="BTN_CLASS" :to="nextHref">下一页 →</NuxtLink>
-    <span v-else class="mecha-clip-s border border-line px-5 py-[7px] font-mono text-[12.5px] text-ink-3 opacity-60">
-      下一页 →
-    </span>
+    <UButton
+      v-if="current < totalPages"
+      :to="nextHref"
+      variant="outline"
+      color="neutral"
+      trailing-icon="i-lucide-chevron-right"
+      label="下一页"
+    />
+    <UButton v-else variant="outline" color="neutral" trailing-icon="i-lucide-chevron-right" label="下一页" disabled />
   </nav>
 </template>

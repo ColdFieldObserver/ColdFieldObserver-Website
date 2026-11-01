@@ -1,70 +1,104 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { SITE } from '#shared/site';
-import {
-  activeMobileDrawer,
-  closeMobileDrawer,
-  toggleMobileDrawer,
-  useMobileDrawerGestures,
-} from '~/composables/useMobileDrawer';
+import { NAV_ITEMS, activeNavKey } from '~/data/nav';
 
-const leftOpen = computed(() => activeMobileDrawer.value === 'left');
-const rightOpen = computed(() => activeMobileDrawer.value === 'right');
-useMobileDrawerGestures();
+// ============================================================
+// 全站顶栏：品牌 + 桌面横排导航 + 搜索 / 主题 / 汉堡
+// ------------------------------------------------------------
+// 移动端（< lg 即 < 1024px）导航收进顶栏正下方的下拉面板 ——
+// 刻意不用 UDrawer / USlideover：面板不锁滚动、不拦焦点，
+// 收起时用 inert 让它退出 Tab 序列，行为比抽屉更轻。
+// ============================================================
+const route = useRoute();
+const activeKey = computed(() => activeNavKey(route.path));
+const mobileOpen = ref(false);
+
+const menuItems = computed(() =>
+  NAV_ITEMS.map((item) => ({
+    label: item.label,
+    icon: item.icon,
+    to: item.to,
+    active: activeKey.value === item.key,
+  })),
+);
+
+// 路由切换后自动收起，避免面板停在新页面上空
+watch(
+  () => route.fullPath,
+  () => {
+    mobileOpen.value = false;
+  },
+);
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape' && mobileOpen.value) mobileOpen.value = false;
+}
+
+onMounted(() => document.addEventListener('keydown', onKeydown));
+onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
 </script>
 
 <template>
-  <!-- 阅读模式排除：顶部为全站页眉，role="banner" 让提取器按 chrome 剔除 -->
-  <header
-    class="site-header flex items-center justify-between gap-4 bg-sidebar px-[22px]"
-    role="banner"
-    data-nosnippet
+  <UHeader
+    :toggle="false"
+    :title="SITE.brand"
+    to="/"
+    :ui="{
+      root: 'sticky top-0 z-50 border-b border-default bg-default/85 backdrop-blur',
+      container: 'max-w-page mx-auto',
+    }"
   >
-    <NuxtLink class="flex min-w-0 items-center gap-2.5" to="/" :aria-label="SITE.brand">
-      <img
-        class="size-[30px] flex-none rounded-xs border border-edge/60 object-cover"
-        src="/images/logo.webp"
-        alt=""
-        width="30"
-        height="30"
-        aria-hidden="true"
+    <!-- #title 插槽本身是 flex items-end（图标贴底对齐），所以里面包一层
+         items-center 的容器让图标与文字垂直居中。
+         注释写在插槽外面：写进插槽会变成链接内容的一部分，
+         会让无障碍名称里混进这段中文。 -->
+    <template #title>
+      <span class="flex items-center gap-2">
+        <img
+          class="size-8 shrink-0 rounded-lg object-contain"
+          :src="withBase('/images/logo.webp')"
+          :alt="SITE.brand"
+          width="32"
+          height="32"
+          decoding="async"
+          fetchpriority="high"
+        />
+        <span class="text-[17px] font-bold tracking-[1px]">{{ SITE.brand }}</span>
+      </span>
+    </template>
+
+    <UNavigationMenu :items="menuItems" highlight />
+
+    <template #right>
+      <SearchLauncher compact />
+      <ThemeToggle />
+      <UButton
+        class="lg:hidden"
+        variant="ghost"
+        color="neutral"
+        square
+        :icon="mobileOpen ? 'i-lucide-x' : 'i-lucide-menu'"
+        :aria-label="mobileOpen ? '关闭主导航' : '打开主导航'"
+        :aria-expanded="mobileOpen"
+        aria-controls="site-mobile-nav"
+        @click="mobileOpen = !mobileOpen"
       />
-      <span class="brand-text text-[17px] font-bold tracking-[2px] whitespace-nowrap">{{ SITE.brand }}</span>
-      <span class="brand-sub hidden">{{ SITE.codename }}</span>
-    </NuxtLink>
+    </template>
 
-    <div class="flex items-center gap-3">
-      <button
-        class="drawer-btn mecha-clip-s border border-edge bg-accent-soft text-accent-2 hover:bg-accent hover:text-on-accent"
-        type="button"
-        :aria-label="leftOpen ? '关闭主导航' : '打开主导航'"
-        :aria-expanded="leftOpen"
-        @click="toggleMobileDrawer('left')"
+    <!-- 顶栏正下方的下拉面板：绝对定位，不撑高 sticky header，滚动不跳动。
+         收起态用 grid-rows-[0fr] + inert：内容不占位，也不进键盘 Tab 序列。 -->
+    <template #bottom>
+      <div
+        id="site-mobile-nav"
+        class="absolute inset-x-0 top-full grid overflow-hidden border-b border-default bg-default shadow-lg transition-[grid-template-rows] duration-300 lg:hidden"
+        :class="mobileOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'"
+        :inert="!mobileOpen"
       >
-        <Icon name="i-lucide-menu" class="size-[22px]" aria-hidden="true" />
-      </button>
-
-      <button
-        class="drawer-btn mecha-clip-s border border-edge bg-accent-soft text-accent-2 hover:bg-accent hover:text-on-accent"
-        type="button"
-        :aria-label="rightOpen ? '关闭侧边栏' : '打开侧边栏'"
-        :aria-expanded="rightOpen"
-        aria-controls="sidebar-right"
-        @click="toggleMobileDrawer('right')"
-      >
-        <Icon name="i-lucide-panel-right" class="size-[22px]" aria-hidden="true" />
-      </button>
-    </div>
-  </header>
-
-  <!--
-    遮罩必须渲染在 <header> 之外：header 自身 z-index:120 会创建层叠上下文，
-    放在里面会被抬到抽屉(100)之上，导致抽屉不可点击。
-  -->
-  <div
-    class="sidebar-overlay"
-    :class="{ open: activeMobileDrawer !== null }"
-    aria-hidden="true"
-    @click="closeMobileDrawer"
-  />
+        <div class="min-h-0 overflow-hidden">
+          <UNavigationMenu orientation="vertical" :items="menuItems" class="p-2" />
+        </div>
+      </div>
+    </template>
+  </UHeader>
 </template>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Post } from '#shared/types/post';
 
+// 文章网格：与 UPageGrid 的 auto-fill 密度规则一致，
+// 列数交给容器宽度决定，不需要写单列媒体查询。
 withDefaults(
   defineProps<{
     posts: Post[];
@@ -11,8 +13,8 @@ withDefaults(
 </script>
 
 <template>
-  <div class="grid grid-cols-[repeat(auto-fill,minmax(290px,1fr))] gap-5 max-md:grid-cols-1">
-    <p v-if="!posts.length" class="col-span-full py-11 text-center text-[14.5px] text-ink-3">
+  <div class="card-grid grid grid-cols-[repeat(auto-fill,minmax(min(290px,100%),1fr))] gap-4">
+    <p v-if="!posts.length" class="col-span-full py-11 text-center text-sm text-dimmed">
       {{ emptyText }}
     </p>
     <template v-else>

@@ -28,14 +28,10 @@ const meta = computed(() => ({
   tags: all.value[index.value]?.tags ?? [],
 }));
 
-/** 是否有目录（正文里至少两级标题才值得渲染） */
-const hasToc = computed(() => {
-  const toc = (post.value as { body?: { toc?: { links?: unknown[] } } }).body?.toc;
-  return Boolean(toc?.links?.length);
-});
+// 目录不再由页面决定：正文里写了 [TOC] 才有目录（见 usePostEnhance 的 mountTocPlaceholder）
 
 /**
- * 正文增强：目录填充、锚点精确对齐、代码块复制按钮、Mermaid 渲染。
+ * 正文增强：目录填充、锚点精确对齐、代码块复制按钮。
  * 必须在 DOM 就绪后调用；站内跳转时按路由重置内部缓存。
  */
 function runEnhance(): void {
@@ -50,45 +46,49 @@ useHead({ title: post.value.title });
 
 <template>
   <article v-if="post" class="post-view">
-    <header class="mb-6">
+    <nav class="mb-4" aria-label="返回文章列表">
+      <UButton
+        to="/posts/"
+        variant="soft"
+        color="primary"
+        size="sm"
+        icon="i-lucide-arrow-left"
+        label="返回博客"
+      />
+    </nav>
+
+    <header class="mb-7">
       <h1 class="post-title">{{ post.title }}</h1>
       <div class="post-meta">
         <time>{{ meta.date }}</time>
-        <NuxtLink
-          v-for="category in meta.categories"
-          :key="category"
-          class="mecha-tag"
-          :to="`/categories/${category}`"
-        >
-          {{ category }}
+        <NuxtLink v-for="category in meta.categories" :key="category" :to="`/categories/${category}`">
+          <UBadge color="primary" variant="soft" size="sm">{{ category }}</UBadge>
         </NuxtLink>
-        <NuxtLink v-for="tag in meta.tags" :key="tag" class="mecha-tag" :to="`/tags/${tag}`">
-          #{{ tag }}
+        <NuxtLink v-for="tag in meta.tags" :key="tag" :to="`/tags/${tag}`">
+          <UBadge color="neutral" variant="soft" size="sm">#{{ tag }}</UBadge>
         </NuxtLink>
       </div>
     </header>
-
-    <div v-if="hasToc" class="post-toc" data-post-toc />
 
     <div class="post-content">
       <ContentRenderer :value="post" />
     </div>
 
-    <nav class="mt-8 flex justify-between gap-4 border-t border-line pt-5" aria-label="上下篇">
-      <NuxtLink v-if="prev" class="max-w-[46%] text-[14px] text-accent-2 hover:underline" :to="prev.url">
+    <nav class="mt-10 flex justify-between gap-4 border-t border-default pt-5" aria-label="上一篇 / 下一篇">
+      <NuxtLink v-if="prev" class="max-w-[46%] text-sm text-primary hover:underline" :to="prev.url">
         ← {{ prev.title }}
       </NuxtLink>
       <span v-else />
       <NuxtLink
         v-if="next"
-        class="ml-auto max-w-[46%] text-right text-[14px] text-accent-2 hover:underline"
+        class="ml-auto max-w-[46%] text-right text-sm text-primary hover:underline"
         :to="next.url"
       >
         {{ next.title }} →
       </NuxtLink>
     </nav>
 
-    <section class="mt-8" aria-label="评论">
+    <section class="mt-10" aria-label="评论">
       <GiscusComments />
     </section>
   </article>

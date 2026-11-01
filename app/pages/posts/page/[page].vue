@@ -12,15 +12,15 @@ const { pagePosts, totalPages, page } = usePagedPosts(
 );
 
 const summary = computed(
-  () => `共 ${all.value.length} 篇日志 · 第 ${page.value} / ${totalPages.value} 页`,
+  () => `共 ${all.value.length} 篇文章 · 第 ${page.value} / ${totalPages.value} 页`,
 );
 
-useHead({ title: computed(() => `博客日志 · 第 ${pageNo.value} 页`) });
+useHead({ title: computed(() => `博客文章 · 第 ${pageNo.value} 页`) });
 </script>
 
 <template>
   <ListPage
-    title="博客日志"
+    title="博客文章"
     :summary="summary"
     :posts="pagePosts"
     :current="page"

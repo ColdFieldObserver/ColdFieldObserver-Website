@@ -21,9 +21,11 @@ withDefaults(
 
 <template>
   <div class="mx-auto max-w-page">
-    <header class="mb-6 border-b border-line pb-4">
-      <h1 class="mecha-title">{{ title }}</h1>
-      <p v-if="summary" class="mt-2 text-[13px] text-ink-3">{{ summary }}</p>
+    <header class="mb-6 border-b border-default pb-5">
+      <h1 class="text-[clamp(24px,3.4vw,32px)] font-extrabold tracking-tight text-highlighted">
+        {{ title }}
+      </h1>
+      <p v-if="summary" class="mt-1.5 text-sm text-dimmed">{{ summary }}</p>
     </header>
 
     <SearchLauncher v-if="showSearch" />

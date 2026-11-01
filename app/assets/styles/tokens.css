@@ -2,46 +2,44 @@
    冷域观者 · 设计令牌（Tailwind CSS v4 @theme）
    ------------------------------------------------------------
    规则一：颜色真值只存在于 base.css 的 :root（那里才有深色覆盖），
-           本文件只做 1:1 别名，别名里不写死颜色（静态品牌除外）。
-   规则二：圆角 / 阴影 / 断点 / 容器宽度只在这里定义一次。
+           本文件只做 1:1 别名，别名里不写死颜色。
+   规则二：圆角 / 阴影 / 容器宽度只在这里定义一次。
    规则三：必须用 @theme static —— 否则未被工具类引用的变量会被摇树删掉，
            而大量普通 CSS 仍会 var(--radius-m) 直接引用。
    ============================================================ */
 
 @theme static {
   /* ---- 断点 ----
-     这里只是「有据可查的清单」；模板里一律手写 @media (max-width: Npx)，
-     因为 1024px 必须与 useMobileDrawer 的 matchMedia 完全一致。 */
-  --breakpoint-*: initial;
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1280px;
-  /* xl / 2xl 必须存在，否则依赖它们的规则会静默消失 */
-  --breakpoint-2xl: 1536px;
+     不覆盖：沿用 Tailwind v4 与 Nuxt UI 的默认值
+     sm 640 / md 768 / lg 1024 / xl 1280 / 2xl 1536。
+     移动端临界值 = 1024（lg）—— UHeader 的导航默认 hidden lg:flex、
+     toggle 默认 lg:hidden，正好落在这一档。 */
 
-  /* ---- 圆角（机甲风整体偏方正）----
-     清空后必须把 xs…3xl 补齐：Tailwind 自己的 rounded-* 工具类靠这些键，
-     缺一个就整条规则不存在（表现为元素变直角，且没有报错）。 */
+  /* ---- 圆角 ----
+     清空命名空间是为了让整套刻度统一到「现代但克制」的档位；
+     但必须把 xs…3xl 补齐：Nuxt UI 组件内部写的是 rounded-md / rounded-lg
+     这类工具类，键缺了就整条规则不存在（按钮、弹窗、卡片全变直角）。 */
   --radius-*: initial;
-  --radius-xs: 2px;
-  --radius-sm: 3px;
-  --radius-md: 4px;
-  --radius-lg: 6px;
-  --radius-xl: 8px;
-  --radius-2xl: 12px;
-  --radius-3xl: 16px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 24px;
+  --radius-3xl: 32px;
   --radius-full: 999px;
-  /* 语义别名，与旧 SCSS 的 $radius-s/m/l 一一对应 */
-  --radius-s: 2px;
-  --radius-m: 3px;
-  --radius-l: 4px;
+  /* 语义别名，供普通 CSS 直接 var() */
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 16px;
 
-  /* ---- 阴影：机甲风以「外发光」代替柔和投影 ---- */
-  --shadow-*: initial;
-  --shadow-card: 0 2px 0 rgba(45, 140, 255, 0.06), 0 8px 24px rgba(3, 10, 20, 0.32);
-  --shadow-float: 0 12px 48px rgba(3, 10, 20, 0.5);
-  --shadow-brand: 0 0 0 1px rgba(45, 140, 255, 0.35), 0 0 22px rgba(45, 140, 255, 0.22);
+  /* ---- 阴影 ----
+     不要清空 --shadow-*：Nuxt UI 的卡片 / 按钮 / 浮层用的是
+     shadow-sm / shadow-lg 这些默认阶，清空后会静默无阴影。
+     这里只追加站点语义阴影。 */
+  --shadow-card: 0 1px 2px rgba(12, 29, 48, 0.04), 0 6px 18px rgba(12, 29, 48, 0.06);
+  --shadow-float: 0 12px 40px rgba(12, 29, 48, 0.12);
+  --shadow-brand: 0 6px 18px color-mix(in srgb, var(--accent) 28%, transparent);
 
   /* ---- 字体：只做别名（不能同名，否则自引用成环） ---- */
   --font-sans: var(--font-ui);
@@ -50,17 +48,57 @@
   /* ---- 容器宽度 → max-w-page ---- */
   --container-page: 1180px;
 
-  /* ---- 颜色：清空默认调色板，只暴露站点语义色 ---- */
+  /* ---- 颜色：清空默认调色板，只暴露站点语义色 ----
+     注意清空会连带删掉 Nuxt UI 生成的 --color-primary-* / neutral-* / error-*，
+     因此下面必须把三套色阶原样补回（真值在 base.css 的 --ui-color-*）。 */
   --color-*: initial;
   --color-transparent: transparent;
   --color-white: #fff;
   --color-black: #000;
+
+  /* Nuxt UI 组件直接使用 bg-primary / text-primary / ring-primary/25 这类工具类 */
+  --color-primary: var(--ui-primary);
+  --color-error: var(--ui-error);
+
+  /* 三套 50–950 色阶（Nuxt UI 按「色名 + 阶数」取色，缺一档就静默失色） */
+  --color-primary-50: var(--ui-color-primary-50);
+  --color-primary-100: var(--ui-color-primary-100);
+  --color-primary-200: var(--ui-color-primary-200);
+  --color-primary-300: var(--ui-color-primary-300);
+  --color-primary-400: var(--ui-color-primary-400);
+  --color-primary-500: var(--ui-color-primary-500);
+  --color-primary-600: var(--ui-color-primary-600);
+  --color-primary-700: var(--ui-color-primary-700);
+  --color-primary-800: var(--ui-color-primary-800);
+  --color-primary-900: var(--ui-color-primary-900);
+  --color-primary-950: var(--ui-color-primary-950);
+  --color-error-50: var(--ui-color-error-50);
+  --color-error-100: var(--ui-color-error-100);
+  --color-error-200: var(--ui-color-error-200);
+  --color-error-300: var(--ui-color-error-300);
+  --color-error-400: var(--ui-color-error-400);
+  --color-error-500: var(--ui-color-error-500);
+  --color-error-600: var(--ui-color-error-600);
+  --color-error-700: var(--ui-color-error-700);
+  --color-error-800: var(--ui-color-error-800);
+  --color-error-900: var(--ui-color-error-900);
+  --color-error-950: var(--ui-color-error-950);
+  --color-neutral-50: var(--ui-color-neutral-50);
+  --color-neutral-100: var(--ui-color-neutral-100);
+  --color-neutral-200: var(--ui-color-neutral-200);
+  --color-neutral-300: var(--ui-color-neutral-300);
+  --color-neutral-400: var(--ui-color-neutral-400);
+  --color-neutral-500: var(--ui-color-neutral-500);
+  --color-neutral-600: var(--ui-color-neutral-600);
+  --color-neutral-700: var(--ui-color-neutral-700);
+  --color-neutral-800: var(--ui-color-neutral-800);
+  --color-neutral-900: var(--ui-color-neutral-900);
+  --color-neutral-950: var(--ui-color-neutral-950);
+
+  /* 站点自有语义色 */
   --color-accent: var(--accent);
-  --color-accent-2: var(--accent-2);
+  --color-accent-deep: var(--accent-deep);
   --color-accent-soft: var(--accent-soft);
-  --color-accent-static: #2d8cff;
-  --color-accent-deep: #1a5fa0;
-  --color-on-accent: var(--on-accent);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-ink-3: var(--ink-3);
@@ -70,51 +108,26 @@
   --color-card: var(--card);
   --color-line: var(--line);
   --color-edge: var(--edge);
-  --color-sidebar: var(--sidebar-bg);
   --color-code: var(--code-bg);
   --color-code-hd: var(--code-hd);
-}
-
-/* ============================================================
-   机甲切角
-   ------------------------------------------------------------
-   旧实现是 SCSS 函数 mecha-clip($size)，调用处传变量；改工具类后由
-   三个固定档位 + 双切替代。都在「右下角」切一个三角，模拟装甲板斜切。
-   ============================================================ */
-@utility mecha-clip-s {
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
-}
-
-@utility mecha-clip-m {
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%);
-}
-
-@utility mecha-clip-l {
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
-}
-
-/* 双向斜切（左上 + 右下）：小徽标用 */
-@utility mecha-clip-dual {
-  clip-path: polygon(
-    0 0,
-    calc(100% - 6px) 0,
-    100% 6px,
-    100% 100%,
-    6px 100%,
-    0 calc(100% - 6px)
-  );
+  --color-inline-code: var(--inline-code-bg);
+  --color-inline-code-ink: var(--inline-code-ink);
 }
 
 /* ============================================================
    深色变体（模板里写 dark:xxx 时使用）
    ------------------------------------------------------------
-   两路命中，与 base.css 的深色变量判定完全一致：
+   三路命中，与 base.css 的深色变量判定完全一致：
      1) 手动 data-theme="dark"
-     2) auto + 系统深色
-   用 :where() 把特指度归零，胜负只由工具类排序决定。
+     2) .dark class（useTheme 与首帧脚本双写时使用）
+     3) auto + 系统深色
+   用 :where() 把选择器特指度归零，胜负只由工具类排序决定。
+
+   注意：@nuxt/ui 自带一条只认 .dark 的 @custom-variant dark，
+   本文件在它之后导入，因此这里生效（同名变体后声明者胜）。
    ============================================================ */
 @custom-variant dark {
-  &:where([data-theme='dark'], [data-theme='dark'] *) {
+  &:where([data-theme='dark'], [data-theme='dark'] *, .dark, .dark *) {
     @slot;
   }
 

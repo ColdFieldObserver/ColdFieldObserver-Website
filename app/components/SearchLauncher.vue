@@ -1,23 +1,42 @@
 <script setup lang="ts">
 import { openSearchDialog } from '~/composables/useSearch';
+
+// 搜索入口有两种形态：
+//   compact —— 顶栏图标按钮
+//   默认    —— 列表页顶部的整行输入框样式按钮
+withDefaults(defineProps<{ compact?: boolean }>(), { compact: false });
 </script>
 
 <template>
-  <button
-    class="search-launcher mecha-clip-s mb-[18px] flex w-full items-center gap-3 border border-line bg-panel px-4 py-3 text-left text-[14px] text-ink-3 transition-colors hover:border-accent hover:text-ink-2"
-    type="button"
+  <UButton
+    v-if="compact"
+    class="search-launcher"
+    variant="ghost"
+    color="neutral"
+    square
+    icon="i-lucide-search"
+    aria-label="搜索"
     aria-haspopup="dialog"
     @click="openSearchDialog($event.currentTarget as HTMLElement)"
-  >
-    <Icon name="i-lucide-search" class="size-4 shrink-0" aria-hidden="true" />
-    <span class="flex-1">检索日志标题、正文与标签…</span>
-    <kbd class="mecha-clip-s border border-line px-1.5 py-0.5 font-mono text-[10.5px] text-ink-3">
-      Ctrl K
-    </kbd>
-  </button>
+  />
 
-  <!-- 无 JS 时上面的弹窗打不开，退化成站内搜索页链接 -->
-  <NuxtLink class="search-launcher-fallback hidden text-accent-2 underline" to="/search/">
-    打开搜索页
-  </NuxtLink>
+  <div v-else class="mb-5">
+    <UButton
+      class="search-launcher w-full justify-start"
+      variant="outline"
+      color="neutral"
+      size="lg"
+      icon="i-lucide-search"
+      aria-haspopup="dialog"
+      @click="openSearchDialog($event.currentTarget as HTMLElement)"
+    >
+      <span class="flex-1 text-left text-toned">检索文章标题、正文与标签…</span>
+      <UKbd size="sm">Ctrl K</UKbd>
+    </UButton>
+
+    <!-- 无 JS 时上面的弹窗打不开，退化成站内搜索页链接 -->
+    <NuxtLink class="search-launcher-fallback hidden text-primary underline" to="/search/">
+      打开搜索页
+    </NuxtLink>
+  </div>
 </template>

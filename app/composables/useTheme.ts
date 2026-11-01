@@ -3,7 +3,10 @@ import { computed, ref } from 'vue';
 // ============================================================
 // 主题模式（浅色 / 深色 / 跟随系统）
 //
-// 只写 <html data-theme>（本站在没有 Nuxt UI 的情况下不需要 .dark class），
+// 同时写两套标记：
+//   <html data-theme> —— 驱动项目自己的设计令牌（base.css 的 :root 覆盖）
+//   .dark / .light    —— 驱动 Nuxt UI 的 --ui-* 语义变量与 dark: 变体
+// 只写其中一套的话，深色下另一套仍是浅色皮肤（顶栏、卡片会发白）。
 // localStorage 持久化选择；auto 模式走 prefers-color-scheme 跟随系统。
 // 首帧防闪烁由 nuxt.config.ts 的 <head> 内联脚本读取同一 storage key。
 // ============================================================
@@ -42,8 +45,11 @@ let bound = false;
 
 function apply(): void {
   if (typeof document === 'undefined') return;
-  document.documentElement.setAttribute('data-theme', mode.value);
   const dark = resolvedDark.value;
+  const root = document.documentElement;
+  root.setAttribute('data-theme', mode.value);
+  root.classList.toggle('dark', dark);
+  root.classList.toggle('light', !dark);
   for (const listener of listeners) listener(dark);
 }
 

@@ -2,3 +2,6 @@
 allowBuilds:
   esbuild: true
   better-sqlite3: true
+  # Nuxt UI 的依赖链（vaul-vue / reka-ui）会带出 vue-demi，
+  # 它的 postinstall 负责按 Vue 主版本切换入口文件。
+  vue-demi: true

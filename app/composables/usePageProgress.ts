@@ -247,7 +247,7 @@ export function usePageProgress(): PageProgressState {
 /** 收集新页面中尚未加载完成的图片（视口外的懒加载图片不参与） */
 function pendingImageTasks(): Promise<unknown>[] {
   const tasks: Promise<unknown>[] = [];
-  const images = Array.from(document.querySelectorAll<HTMLImageElement>('.site-main img'));
+  const images = Array.from(document.querySelectorAll<HTMLImageElement>('#content img'));
   for (const img of images) {
     if (img.complete) continue;
     if (img.loading === 'lazy' && img.getBoundingClientRect().top > window.innerHeight) {

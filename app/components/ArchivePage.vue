@@ -34,23 +34,23 @@ const months = computed(() => {
 
 <template>
   <div class="mx-auto max-w-page">
-    <header class="mb-6 border-b border-line pb-4">
-      <h1 class="mecha-title">归档</h1>
-      <p class="mt-2 text-[13px] text-ink-3">
+    <header class="mb-6 border-b border-default pb-5">
+      <h1 class="text-[clamp(24px,3.4vw,32px)] font-extrabold tracking-tight text-highlighted">归档</h1>
+      <p class="mt-1.5 text-sm text-dimmed">
         共 {{ posts.length }} 篇 · {{ totalPages }} 个年份 · 第 {{ page }} / {{ totalPages }} 页
       </p>
     </header>
 
-    <h2 v-if="currentYear" class="mb-4 flex items-baseline gap-2">
-      <span class="font-mono text-[26px] leading-none font-extrabold text-ink">{{ currentYear }}</span>
-      <span class="text-[13px] text-ink-3">年 · {{ yearPosts.length }} 篇</span>
+    <h2 v-if="currentYear" class="mb-5 flex items-baseline gap-2">
+      <span class="text-[26px] leading-none font-extrabold text-highlighted">{{ currentYear }}</span>
+      <span class="text-sm text-dimmed">年 · {{ yearPosts.length }} 篇</span>
     </h2>
 
-    <p v-if="!months.length" class="py-11 text-center text-[14.5px] text-ink-3">暂无归档内容</p>
+    <p v-if="!months.length" class="py-11 text-center text-sm text-dimmed">暂无归档内容</p>
 
-    <div v-else class="flex flex-col gap-6">
+    <div v-else class="flex flex-col gap-8">
       <section v-for="group in months" :key="group.month">
-        <h3 class="mb-3 font-mono text-[13px] tracking-[1px] text-accent-2">{{ group.month }}</h3>
+        <h3 class="mb-3 text-sm font-semibold text-primary">{{ group.month }}</h3>
         <CardGrid :posts="group.list" />
       </section>
     </div>

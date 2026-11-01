@@ -1,146 +1,76 @@
 /* ============================================================
-   全站动效（机甲风）
-   1. 页面切换：旧页下沉淡出 → 新页自下推入 + 由下向上「舱门展开」
-   2. 切换瞬间：主内容顶部一道横向扫描光
-   3. 滚动淡入：元素进入视口时从下方推入
+   全站动效
+   1. 页面切换：旧页淡出 → 新页淡入 + 轻微上浮
+   2. 滚动淡入：区块进入视口时上浮显现（由 useScrollReveal 打 data-reveal）
    全部遵循系统「减少动态效果」偏好。
    ============================================================ */
 
 /* ---- 页面切换 ---- */
 .page-enter-active,
 .page-leave-active {
-  will-change: opacity, transform, clip-path;
+  will-change: opacity, transform;
 }
 
 .page-enter-active {
   transition:
-    opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
-    clip-path 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.36s var(--ease-out-soft),
+    transform 0.36s var(--ease-out-soft);
 }
 
 .page-leave-active {
   transition:
-    opacity 0.24s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity 0.2s var(--ease-inout),
+    transform 0.2s var(--ease-inout);
 }
 
 .page-enter-from {
   opacity: 0;
-  transform: translate3d(0, 22px, 0);
-  clip-path: inset(0 0 100% 0);
+  transform: translate3d(0, 12px, 0);
 }
 
 .page-leave-to {
   opacity: 0;
-  transform: translate3d(0, -14px, 0);
+  transform: translate3d(0, -8px, 0);
 }
 
-/* ---- 切换扫描光 ---- */
-.site-main {
-  position: relative;
-}
-
-.site-main::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 60;
-  height: 2px;
-  pointer-events: none;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+/* ---- 滚动淡入 ----
+   契约由 useScrollReveal 写入 data-reveal；只在 JS 就绪（html.js）时隐藏：
+   脚本不跑时内容必须永远可见，这是「无 JS 白屏」的防线之一。 */
+html.js [data-reveal='hidden'] {
   opacity: 0;
+  transform: translateY(24px);
 }
 
-.site-main.is-switching::after {
-  animation: mecha-scan 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@keyframes mecha-scan {
-  0% {
-    opacity: 0;
-    transform: translateY(0);
-  }
-
-  15% {
-    opacity: 0.9;
-  }
-
-  85% {
-    opacity: 0.9;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translateY(100vh);
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal='shown'] {
+    animation: reveal-up 0.55s var(--ease-out-soft) backwards;
+    /* 同屏区块的错开节奏由 JS 写进 --reveal-delay */
+    animation-delay: var(--reveal-delay, 0ms);
   }
 }
 
-/* ---- 内容入场：.site-main 前 8 个直接子块错峰上浮 ----
-   用 backwards 而不是 both：动画结束后不保留 transform，
-   否则首层子元素会永久成为 fixed 后代的包含块。 */
-@keyframes rise-in {
+@keyframes reveal-up {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(24px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .site-main > :nth-child(-n + 8) {
-    animation: rise-in 0.6s var(--ease-out-soft) backwards;
-  }
-
-  .site-main > :nth-child(1) {
-    animation-delay: 30ms;
-  }
-
-  .site-main > :nth-child(2) {
-    animation-delay: 95ms;
-  }
-
-  .site-main > :nth-child(3) {
-    animation-delay: 160ms;
-  }
-
-  .site-main > :nth-child(4) {
-    animation-delay: 225ms;
-  }
-}
-
-/* ---- 滚动淡入 ----
-   只在 JS 就绪（html.js）时隐藏：脚本不跑时内容必须永远可见，
-   这是「无 JS 白屏」的防线之一。 */
-html.js .reveal {
-  opacity: 0;
-  transform: translateY(16px);
-  transition:
-    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-html.js .reveal.is-revealed {
-  opacity: 1;
-  transform: none;
 }
 
 /* ---- 减少动态效果 ---- */
 @media (prefers-reduced-motion: reduce) {
   .page-enter-active,
-  .page-leave-active,
-  .site-main.is-switching::after {
+  .page-leave-active {
     transition-duration: 0s;
-    animation: none;
   }
 
-  html.js .reveal {
-    transition: none;
+  /* 即使打上了标记也直接显示，不做任何位移 */
+  html.js [data-reveal='hidden'] {
+    opacity: 1;
+    transform: none;
   }
 }
