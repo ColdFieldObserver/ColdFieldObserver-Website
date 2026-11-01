@@ -30,7 +30,7 @@ withDefaults(defineProps<{ compact?: boolean }>(), { compact: false });
       aria-haspopup="dialog"
       @click="openSearchDialog($event.currentTarget as HTMLElement)"
     >
-      <span class="flex-1 text-left text-toned">检索日志标题、正文与标签…</span>
+      <span class="flex-1 text-left text-toned">检索文章标题、正文与标签…</span>
       <UKbd size="sm">Ctrl K</UKbd>
     </UButton>
 

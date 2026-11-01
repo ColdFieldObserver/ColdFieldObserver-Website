@@ -46,14 +46,14 @@ useHead({ title: post.value.title });
 
 <template>
   <article v-if="post" class="post-view">
-    <nav class="mb-4" aria-label="返回日志列表">
+    <nav class="mb-4" aria-label="返回文章列表">
       <UButton
         to="/posts/"
         variant="soft"
         color="primary"
         size="sm"
         icon="i-lucide-arrow-left"
-        label="返回日志"
+        label="返回博客"
       />
     </nav>
 

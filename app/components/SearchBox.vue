@@ -44,7 +44,7 @@ onMounted(() => {
       <!-- 订阅源由 server/routes 生成，不是页面：用裸 <a>，走 NuxtLink 会让
            vue-router 找不到路由而报 R0004 -->
       <a class="text-primary underline" :href="withBase('/atom.xml')">RSS 订阅</a>
-      获取最新日志。
+      获取最新文章。
     </p>
 
     <template v-if="mounted">
@@ -58,7 +58,7 @@ onMounted(() => {
           type="search"
           name="q"
           autocomplete="off"
-          placeholder="检索日志标题、正文与标签…"
+          placeholder="检索文章标题、正文与标签…"
           :value="value"
           @input="onInput"
         />

@@ -5,15 +5,13 @@
 export const SITE = {
   /** 站点名（品牌） */
   brand: '冷域观者',
-  /** 机甲代号 */
-  codename: 'CFO / COLDFIELD OBSERVER',
   /** 作者 */
   author: 'ColdFieldObserver',
   /** 站点主标题 */
   title: '冷域观者的个人网站',
   /** 站点描述 */
   description:
-    '冷域观者的个人网站 · 机甲重构版：提供在线工具、资源导航与博客日志（支持 RSS 订阅与全站检索）。',
+    '冷域观者的个人网站，提供在线工具、资源导航与博客日志（支持 RSS 订阅与全站检索）。',
   /** 站点根地址（GitHub Pages 用户主页） */
   mainUrl: 'https://coldfieldobserver.github.io',
 } as const;

@@ -50,7 +50,7 @@ export default defineNuxtConfig({
         },
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'icon', type: 'image/x-icon', href: '/images/favicon.ico' },
         { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: '' },
         // Giscus 评论区在文章页底部，懒加载触发时才注入 iframe；
         // 预连接可省掉首次展开评论时的 DNS + TCP + TLS 握手

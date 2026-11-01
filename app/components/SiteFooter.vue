@@ -8,11 +8,8 @@ import { FRIEND_LINKS, SOCIAL_LINKS } from '~/data/profile';
 //            + 友情链接 + 订阅 / 社交
 // 原 /about 页的「版权与说明」压缩成 #left 里的一行，页面本身已删除。
 // ============================================================
-const year = new Date().getFullYear();
-
-/** 订阅源：站内路径要补 base，并带 Atom 的 MIME。
-    只保留 Atom 一份 —— rss.xml 与 atom.xml 内容等价，两个入口只会让读者犹豫。 */
-const FEEDS = [{ label: 'Atom 订阅', href: withBase('/atom.xml'), type: 'application/atom+xml' }];
+// 这里的 year 必须使用固定字符串，而不是用Date相关方法动态获取
+const year: string = "2026";
 </script>
 
 <template>
@@ -35,7 +32,7 @@ const FEEDS = [{ label: 'Atom 订阅', href: withBase('/atom.xml'), type: 'appli
               <span>{{ SITE.brand }}</span>
             </NuxtLink>
             <p class="mt-3 max-w-xs text-sm leading-relaxed text-toned">
-              {{ SITE.codename }} · 逃跑吧少年与蛋仔派对玩家的个人站点
+              {{ SITE.description }}
             </p>
             <nav class="mt-4 flex flex-wrap gap-x-4 gap-y-2" aria-label="页脚导航">
               <NuxtLink
@@ -70,15 +67,16 @@ const FEEDS = [{ label: 'Atom 订阅', href: withBase('/atom.xml'), type: 'appli
           <div class="min-w-0">
             <h2 class="mb-3 text-[13px] font-bold tracking-[0.5px] text-dimmed uppercase">订阅与社交</h2>
             <div class="grid gap-2">
+              <!-- RSS 订阅 -->
               <a
-                v-for="feed in FEEDS"
-                :key="feed.href"
+                :key="withBase('/atom.xml')"
                 class="flex items-center gap-2.5 rounded-lg border border-default px-2.5 py-2 text-sm text-toned transition-colors hover:border-primary/35 hover:text-primary"
-                :href="feed.href"
-                :type="feed.type"
+                :href="withBase('/atom.xml')"
+                target="_blank"
+                type="application/atom+xml"
               >
                 <UIcon name="i-lucide-rss" class="size-4 shrink-0" aria-hidden="true" />
-                <span>{{ feed.label }}</span>
+                <span>RSS 订阅</span>
               </a>
               <a
                 v-for="link in SOCIAL_LINKS"
@@ -98,8 +96,9 @@ const FEEDS = [{ label: 'Atom 订阅', href: withBase('/atom.xml'), type: 'appli
     </template>
 
     <template #left>
+      <!-- 开源声明 -->
       <p class="text-sm text-dimmed">
-        © {{ year }} {{ SITE.brand }} · 个人非盈利站点，游戏素材与商标归各自权利人所有。
+        {{ year }} {{ SITE.brand }} · 网站代码以 MIT 许可证开源
       </p>
     </template>
   </UFooter>

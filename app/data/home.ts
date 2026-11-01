@@ -3,11 +3,11 @@
  * 纯数据模块，不引入任何运行时依赖。
  */
 
-/** Hero 头像：纯几何占位图（SVG），后续换图只改这一个路径 */
-export const AVATAR = '/images/avatar.svg';
+/** Hero 头像：走 CDN 加载 */
+export const AVATAR: string = 'https://img.remit.ee/i/qYHNr12ajXtL';
 
 /** Hero 简介：整段由一个字符串维护，避免模板里散落多段文本 */
-export const HERO_INTRO =
+export const HERO_INTRO: string =
   '简单介绍一下我自己吧。我是冷域观者，一个逃跑吧少年和蛋仔派对玩家，偶尔也玩我的世界、PVZ2 和保卫萝卜4，这里是我的个人网站。';
 
 /** 我的项目 */
@@ -19,7 +19,7 @@ export interface ProjectItem {
   /** 主链接（外部站点） */
   to: string;
   /** 补充链接（可选） */
-  extra?: { label: string; to: string };
+  // extra?: { label: string; to: string };
 }
 
 export const PROJECTS: ProjectItem[] = [
@@ -36,7 +36,6 @@ export const PROJECTS: ProjectItem[] = [
       '自 SS1 赛季起持续归档《逃跑吧！少年》的赛季 BGM，坚持内录而非拆包，规避版权风险。',
     icon: 'i-simple-icons-bilibili',
     to: 'https://space.bilibili.com/3632301571311734',
-    extra: { label: 'WordPress 独立站', to: 'https://dmmdzzmusicarchive.wordpress.com/' },
   },
 ];
 
@@ -51,23 +50,12 @@ export interface GameIdItem {
 }
 
 export const GAME_IDS: GameIdItem[] = [
-  { name: '实况主灯塔', note: '大号', image: 'https://img.remit.ee/i/Kqi2hJUbtHeH' },
-  { name: '翌测', note: '小号', image: 'https://img.remit.ee/i/v7QTWcHyx1t0' },
+  { name: '实况主灯塔', note: '蛋仔派对', image: 'https://img.remit.ee/i/Kqi2hJUbtHeH' },
+  { name: '翌测', note: '蛋仔派对', image: 'https://img.remit.ee/i/v7QTWcHyx1t0' },
 ];
 
-/** 「关于这个站点」正文：按段落顺序渲染，struck 的段落加删除线 */
-export interface NoteSegment {
-  text: string;
-  struck?: boolean;
-}
-
-export const SITE_NOTE: NoteSegment[] = [
-  {
-    text: '这个网站的框架是用 AI 搭的，我只负责内容填充。不过，说句实话，如果我不给复杂的提示词，AI 也生成不出来这种「风格缝合怪」的网站。',
-  },
-  {
-    text: '另外，AI 总是喜欢把 HTML 代码和 CSS、JS 代码写一块，即使我特意说明分离也是如此。',
-    struck: true,
-  },
-  { text: '最终思考权还是在人类手中。' },
+/** “关于这个站点”文本 */
+export const SITE_NOTE: string[] = [
+  '这个站点于2026年5月创建，刚开始是纯静态网页，后来因为难维护所以重构成了Vue3 SPA（但是SEO不好），2026年10月10日把框架换成了VitePress，10月25日又换成了Nuxt 4（现在就是这个样子）。',
+  '这个站点主要是靠AI搭的，我自己也就改了一些内容和删掉了一些冗余代码（我还是能自己改一些代码的）。',
 ];

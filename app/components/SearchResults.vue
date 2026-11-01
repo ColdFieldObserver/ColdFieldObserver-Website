@@ -54,6 +54,6 @@ const stats = computed(() => {
 <template>
   <div>
     <p class="mb-3 text-sm text-dimmed">{{ stats }}</p>
-    <CardGrid :posts="hits" empty-text="没有匹配的日志，换个关键词试试" />
+    <CardGrid :posts="hits" empty-text="没有匹配的文章，换个关键词试试" />
   </div>
 </template>

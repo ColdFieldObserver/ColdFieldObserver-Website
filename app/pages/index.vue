@@ -6,9 +6,9 @@ import { PERSONAL_PROFILE, SOCIAL_LINKS, TIMELINE } from '~/data/profile';
 import { latestPosts, useAllPosts } from '~/composables/usePosts';
 
 // ============================================================
-// 首页：Hero → 关于我 / 身份主线 → 最新日志 → 我的项目
+// 首页：Hero → 关于我 / 身份主线 → 最新文章 → 我的项目
 //       → 我的游戏 ID → 工具矩阵 → 关于这个站点
-// 「最新日志」「个人档案」「工具矩阵」原在右侧栏，右栏移除后搬到这里。
+// 「最新文章」「个人档案」「工具矩阵」原在右侧栏，右栏移除后搬到这里。
 // ============================================================
 const allPosts = useAllPosts();
 const latest = computed(() => latestPosts(allPosts.value, 3));
@@ -17,13 +17,11 @@ const latest = computed(() => latestPosts(allPosts.value, 3));
 const TOOL_FEATURED = TOOL_LINKS.slice(0, 4);
 
 /**
- * 「我的游戏 ID」的跑马灯阈值：与 PidanUI 官网一致 —— 超过 5 张卡才滚动。
+ * 「我的游戏 ID」的跑马灯阈值：超过 5 张卡才滚动。
  * 只有两三个号时静止横排即可，滚动反而让人看不清名字。
  */
 const ID_MARQUEE_MIN = 5;
 const idMarqueeActive = computed(() => GAME_IDS.length > ID_MARQUEE_MIN);
-
-const avatarSrc = withBase(AVATAR);
 
 useHead({ title: SITE.title });
 </script>
@@ -34,32 +32,19 @@ useHead({ title: SITE.title });
     <section class="hero-grid -mx-4 px-4 py-10 text-center sm:-mx-6 sm:px-6 lg:py-14">
       <img
         class="mx-auto size-28 rounded-full object-cover ring-4 ring-primary/15 lg:size-32"
-        :src="avatarSrc"
+        :src="AVATAR"
         alt="冷域观者的头像"
         width="512"
         height="512"
         decoding="async"
         fetchpriority="high"
       />
-      <h1
-        class="mx-auto mt-6 max-w-[22em] text-[clamp(26px,4.6vw,40px)] leading-[1.2] font-extrabold tracking-tight text-highlighted"
-      >
-        欢迎来到冷域观者的博客网站
+      <h1 class="mx-auto mt-6 max-w-[22em] text-[clamp(26px,4.6vw,40px)] leading-[1.2] font-extrabold tracking-tight text-highlighted">
+        欢迎来到冷域观者的个人网站
       </h1>
       <p class="mx-auto mt-4 max-w-[620px] text-[15.5px] leading-[1.9] text-toned">
         {{ HERO_INTRO }}
       </p>
-
-      <!-- 个人档案：Hero 下方的胶囊列表 -->
-      <ul class="mt-6 flex flex-col items-center gap-1.5 text-sm text-toned sm:flex-row sm:flex-wrap sm:justify-center">
-        <li
-          v-for="line in PERSONAL_PROFILE"
-          :key="line"
-          class="rounded-full border border-default px-3 py-1"
-        >
-          {{ line }}
-        </li>
-      </ul>
 
       <div class="mt-6 flex flex-wrap items-center justify-center gap-2.5">
         <UButton
@@ -109,17 +94,17 @@ useHead({ title: SITE.title });
       </UCard>
     </section>
 
-    <!-- 3. 最新日志 -->
+    <!-- 3. 最新博客文章 -->
     <UPageSection
       class="mt-12"
-      title="最新日志"
+      title="最新博客文章"
       description="不定时更新的记录、折腾与归档。"
       :ui="{ container: 'py-0! gap-5' }"
     >
-      <CardGrid :posts="latest" empty-text="暂无日志" />
+      <CardGrid :posts="latest" empty-text="暂无文章" />
       <template #footer>
         <div class="flex justify-center">
-          <UButton to="/posts/" size="lg" trailing-icon="i-lucide-arrow-right" label="查看全部日志" />
+          <UButton to="/posts/" size="lg" trailing-icon="i-lucide-arrow-right" label="查看全部文章" />
         </div>
       </template>
     </UPageSection>
@@ -138,7 +123,7 @@ useHead({ title: SITE.title });
           :icon="project.icon"
           :title="project.name"
           :description="project.description"
-          variant="subtle"
+          variant="outline"
           spotlight
         >
           <template #footer>
@@ -152,6 +137,7 @@ useHead({ title: SITE.title });
                 :label="`打开 ${project.name}`"
                 :padded="false"
               />
+              <!-- 目前不需要 extra 链接，所以注释掉
               <UButton
                 v-if="project.extra"
                 :to="project.extra.to"
@@ -162,6 +148,7 @@ useHead({ title: SITE.title });
                 :label="project.extra.label"
                 :padded="false"
               />
+              -->
             </div>
           </template>
         </UPageCard>
@@ -172,7 +159,7 @@ useHead({ title: SITE.title });
     <UPageSection
       class="mt-12"
       title="我的游戏 ID"
-      description="蛋仔派对的两个号。"
+      description="欢迎和我一起组队。"
       :ui="{ container: 'py-0! gap-5' }"
     >
       <!-- 与 PidanUI 官网同一套规则：超过 5 张卡才滚动。
@@ -209,6 +196,7 @@ useHead({ title: SITE.title });
           :title="tool.name"
           :description="tool.desc"
           variant="outline"
+          spotlight
         />
       </UPageGrid>
       <template #footer>
@@ -222,39 +210,23 @@ useHead({ title: SITE.title });
     <UPageSection
       class="mt-12 mb-4"
       title="关于这个站点"
-      description="一点必要的交代。"
+      description="有关这个站点背后的一些故事。"
       :ui="{ container: 'py-0! gap-5' }"
     >
       <UCard>
         <div class="flex flex-col gap-3 text-[15px] leading-[1.9] text-toned">
-          <p v-for="(seg, index) in SITE_NOTE" :key="index">
-            <del v-if="seg.struck" class="text-dimmed">{{ seg.text }}</del>
-            <template v-else>{{ seg.text }}</template>
-          </p>
-          <p class="text-sm text-dimmed">
-            站点基于 Nuxt 4 + Nuxt UI 构建，纯静态托管于 GitHub Pages；不引入第三方统计脚本，
-            仅使用 Giscus 承载评论。
-          </p>
+          <p v-for="(seg, index) in SITE_NOTE" :key="index">{{ seg }}</p>
         </div>
         <template #footer>
           <div class="flex flex-wrap items-center gap-2">
-            <!-- 订阅源由 server/routes 生成，不是页面：这里必须用裸 <a>，
-                 走 NuxtLink 会让 vue-router 找不到路由而报 R0004 -->
             <UButton
-              :to="withBase('/atom.xml')"
-              external
-              variant="ghost"
-              icon="i-lucide-rss"
-              label="RSS 订阅"
-            />
-            <UButton
-              to="https://github.com/ColdFieldObserver"
+              to="https://github.com/ColdFieldObserver/coldfieldobserver.github.io"
               target="_blank"
               rel="noopener"
               variant="ghost"
               color="neutral"
               icon="i-simple-icons-github"
-              label="站点源码"
+              label="站点源代码"
             />
           </div>
         </template>
