@@ -16,6 +16,7 @@ import { withSiteSuffix } from '#shared/utils/title';
  * <title> 的 `· 冷域观者的个人网站` 后缀由 app.vue 的全局 titleTemplate
  * 追加；og / twitter 标签不经过模板，这里显式补，保持与 <title> 一致。
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function usePostSeo(doc: MaybeRefOrGetter<Record<string, any> | null | undefined>) {
   const d = computed(() => toValue(doc));
   const url = computed(() => absoluteUrl(d.value?.path ?? '/'));
