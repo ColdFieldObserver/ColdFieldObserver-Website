@@ -5,9 +5,11 @@
    （scoped 会整段失效）。整块进 @layer components：需要时工具类仍能覆盖。
    ============================================================ */
 @layer components {
-  /* 文章页不再有卡片外壳：正文直接落在页面底上，只做居中与限宽 */
+  /* 文章页不再有卡片外壳：正文直接落在页面底上，只做居中与限宽。
+     宽度与 PidanUI 官网对齐（64rem ≈ 1024px），比旧值 56rem 略宽，
+     长代码 / 宽表格不至于贴边。 */
   .post-view {
-    max-width: 56rem;
+    max-width: 64rem;
     margin: 0 auto;
   }
 
@@ -193,14 +195,22 @@
     }
   }
 
-  .post-content table {
-    display: block;
-    width: 100%;
+  /* 表格不再 display:block：block 会破坏表格的行/列语义，Edge 阅读模式
+     提取后单元格被块化、关系丢失，整张表看起来「空了」。
+     横向溢出交给外层 .table-scroll（ProseTable 组件渲染），正常站点仍可滚动，
+     阅读模式里这层 div 没有样式、不影响表格语义。 */
+  .post-content .table-scroll {
     margin: 1.2em 0;
     overflow-x: auto;
+    border-radius: var(--radius-md);
+  }
+
+  .post-content table {
+    display: table;
+    width: 100%;
+    margin: 0;
     border-collapse: collapse;
     font-size: 14.5px;
-    border-radius: var(--radius-md);
   }
 
   .post-content table :is(th, td) {

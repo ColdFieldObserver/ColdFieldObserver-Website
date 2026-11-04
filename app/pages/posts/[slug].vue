@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue';
 import { useAllPosts } from '~/composables/usePosts';
+import { usePostSeo } from '~/composables/usePostSeo';
 import { enhancePost } from '~/composables/usePostEnhance';
 
 const route = useRoute();
@@ -44,7 +45,8 @@ watch(
   () => requestAnimationFrame(runEnhance),
 );
 
-useHead({ title: post.value.title });
+// 文章页 SEO：标题 / OG / article:* / JSON-LD —— 补全 Edge 阅读模式丢失的标题信号
+usePostSeo(post);
 </script>
 
 <template>
