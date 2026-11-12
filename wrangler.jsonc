@@ -1,0 +1,20 @@
+{
+  // assets-only Worker：没有 main 字段，纯静态资源，请求不计费。
+  // 部署不经过 GitHub Actions：在 Cloudflare 侧把仓库连上 Git（Workers Builds）
+  // 并按下表设置后，master 推送自动部署，非生产分支 / PR 自动生成预览：
+  //   build command  = pnpm build       （nuxi generate + 字体 + 产物校验）
+  //   deploy command = npx wrangler deploy
+  // previews 声明启用 Worker Previews，预览实例与 master 的生产 Worker 相互独立。
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cfo-mecha-site",
+  "compatibility_date": "2026-10-01",
+  "observability": { "enabled": true },
+  "assets": {
+    "directory": ".output/public",
+    // 产物是「根页面 xxx.html + 子路径 xxx/index.html」的混合形态：
+    // auto-trailing-slash 两种都能命中，URL 保持不带 .html 与尾斜杠。
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash",
+  },
+  "previews": {},
+}

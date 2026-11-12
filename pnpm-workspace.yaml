@@ -5,3 +5,6 @@ allowBuilds:
   # Nuxt UI 的依赖链（vaul-vue / reka-ui）会带出 vue-demi，
   # 它的 postinstall 负责按 Vue 主版本切换入口文件。
   vue-demi: true
+  # wrangler 的本地运行时：install 脚本负责落下 workerd 二进制，
+  # 不放行时 pnpm install 会直接 ERR_PNPM_IGNORED_BUILDS 失败。
+  workerd: true

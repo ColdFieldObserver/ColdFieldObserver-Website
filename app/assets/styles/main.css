@@ -26,6 +26,12 @@
 /* Nuxt UI：主题变量（--ui-*）、组件样式与 keyframes。位置敏感，勿上移。 */
 @import '@nuxt/ui';
 
+/* 等宽字体自包含：Cascadia Code 由 @fontsource 提供 @font-face，
+   交给 Vite 打包（构建期 hash 文件名，产物内没有外部字体请求）。
+   正文字体 HarmonyOS Sans SC 的分片由 scripts/sync-fonts.mjs 灌注。 */
+@import '@fontsource/cascadia-code/400.css';
+@import '@fontsource/cascadia-code/700.css';
+
 @import './tokens.css';
 @import './base.css';
 @import './prose.css';

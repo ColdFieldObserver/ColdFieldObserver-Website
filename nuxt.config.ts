@@ -1,14 +1,38 @@
+import { createRequire } from 'node:module';
+import { dirname } from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
 import { buildRoutes } from './build/post-index';
 import { rehypeExternalLinksBlank } from './build/rehype-external-links';
 
 // ============================================================
 // 冷域观者的个人网站 · Nuxt 站点配置
-//   - 纯静态站点：`nuxt generate` 产出 .output/public，部署 GitHub Pages
+//   - 纯静态站点：`nuxi generate` 产出 .output/public，以 assets-only Worker
+//     的形式部署到 Cloudflare Workers（Git 集成设置后由 Cloudflare 自动构建部署）
 //   - 内容由 @nuxt/content v3 驱动（content/posts/*.md）
 //   - 样式由 Nuxt UI 4 接管（圆角 + 描边 + hover 阴影），
 //     主题色与字体栈仍来自项目令牌（app/assets/styles/base.css）
 // ============================================================
+
+// ---- 字体（自包含，与 PidanUI 官网 / OpenPidanUI 官网同款）----
+// 生产：`nuxi generate` 之后由 scripts/sync-fonts.mjs 生成 /fonts/harmonyos.css；
+// 开发：还没有那次构建，直接把 npm 包里的三档样式（含同目录 woff2 分片）挂到
+//       Nitro 的 /fonts 下，否则 dev 下样式表 404，正文会掉到系统字体。
+const require = createRequire(import.meta.url);
+const isDev = process.env.NODE_ENV === 'development';
+let harmonyFontsDir = '';
+try {
+  harmonyFontsDir = dirname(require.resolve('harmonyos-sans-sc-webfont-splitted'));
+} catch {
+  // 包没装时不挂载：构建会由 sync-fonts.mjs 直接报错，比这里静默失败更明确
+}
+
+const FONT_LINKS = isDev
+  ? [
+      { rel: 'stylesheet', href: '/fonts/Regular.css' },
+      { rel: 'stylesheet', href: '/fonts/Medium.css' },
+      { rel: 'stylesheet', href: '/fonts/Bold.css' },
+    ]
+  : [{ rel: 'stylesheet', href: '/fonts/harmonyos.css' }];
 export default defineNuxtConfig({
   compatibilityDate: '2026-10-01',
   ssr: true,
@@ -18,7 +42,7 @@ export default defineNuxtConfig({
 
   // ============================================================
   // Nuxt UI 接入策略
-  //   - fonts: false —— 字体由 app.head 的 CDN <link> 提供，
+  //   - fonts: false —— 字体全部自包含（本地 /fonts + Vite 打包），
   //     不交给 @nuxt/fonts 接管（否则会自建 @font-face 并改字体栈）
   //   - colorMode: false —— 主题三态仍由 useTheme.ts 独占。
   //     开着会注入第二个首帧脚本，按系统偏好写 .dark，与 "cfo-theme" 打架
@@ -46,33 +70,18 @@ export default defineNuxtConfig({
         {
           name: 'keywords',
           content:
-            'ColdFieldObserver, 冷域观者, 逃少音乐档案馆, 逃跑吧少年背景音乐, CFObserver, 在线工具, Base64, Unicode, 时间戳, URL编码, 蛋仔派对',
+            'ColdFieldObserver, 冷域观者, 逃少音乐档案馆, 逃跑吧少年背景音乐, CFObserver, 个人博客, 站点日志, 蛋仔派对',
         },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/images/favicon.ico' },
-        { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: '' },
         // Giscus 评论区在文章页底部，懒加载触发时才注入 iframe；
         // 预连接可省掉首次展开评论时的 DNS + TCP + TLS 握手
         { rel: 'preconnect', href: 'https://giscus.app' },
-        // 字体全部走 CDN，仓库不保留字体文件：
-        //   HarmonyOS Sans SC（400/500/700，unicode-range 分片）+ Cascadia Code（代码块）
-        {
-          rel: 'stylesheet',
-          href: 'https://cdn.jsdelivr.net/npm/harmonyos-sans-sc-webfont-splitted@1.1.0/dist/Regular.css',
-        },
-        {
-          rel: 'stylesheet',
-          href: 'https://cdn.jsdelivr.net/npm/harmonyos-sans-sc-webfont-splitted@1.1.0/dist/Medium.css',
-        },
-        {
-          rel: 'stylesheet',
-          href: 'https://cdn.jsdelivr.net/npm/harmonyos-sans-sc-webfont-splitted@1.1.0/dist/Bold.css',
-        },
-        {
-          rel: 'stylesheet',
-          href: 'https://cdn.jsdelivr.net/npm/@fontsource/cascadia-code@5.2.3/index.min.css',
-        },
+        // 字体自包含：HarmonyOS Sans SC 的 400 / 500 / 700 三档分片由
+        // scripts/sync-fonts.mjs 灌注到 /fonts，Cascadia Code 由 @fontsource
+        // 交给 Vite 打包（见 main.css）。仓库不保留字体文件，也不再走 CDN。
+        ...FONT_LINKS,
         {
           rel: 'alternate',
           type: 'application/atom+xml',
@@ -195,6 +204,15 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    // 显式锁死 static：Cloudflare 上的环境变量会把预设切到 cloudflare-*，
+    // 那套产物带 Worker 入口，wrangler deploy 会找不到 assets 目录。
+    preset: 'static',
+    // 开发期直接挂 npm 包里的 HarmonyOS Sans SC 分片（生产产物由
+    // scripts/sync-fonts.mjs 灌注，不需要这条挂载）。
+    publicAssets:
+      isDev && harmonyFontsDir
+        ? [{ dir: harmonyFontsDir, baseURL: '/fonts', maxAge: 0 }]
+        : undefined,
     prerender: {
       // 路由由 build/post-index.ts 显式枚举，不靠爬虫
       crawlLinks: false,
