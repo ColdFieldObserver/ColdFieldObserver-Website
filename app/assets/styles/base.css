@@ -342,7 +342,7 @@
   }
 
   /* Preflight 把标题字号 / 字重设为 inherit（正文里由 prose.css 接管），
-     但页面级标题（error.vue、工具页）需要粗体 */
+     但页面级标题（error.vue、列表页）需要粗体 */
   h1,
   h2,
   h3,

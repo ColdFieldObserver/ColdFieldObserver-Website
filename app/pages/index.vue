@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { SITE, TOOL_LINKS } from '#shared/site';
+import { SITE } from '#shared/site';
 import { AVATAR, GAME_IDS, HERO_INTRO, PROJECTS, SITE_NOTE } from '~/data/home';
 import { PERSONAL_PROFILE, SOCIAL_LINKS, TIMELINE } from '~/data/profile';
 import { latestPosts, useAllPosts } from '~/composables/usePosts';
 
 // ============================================================
 // 首页：Hero → 关于我 / 身份主线 → 最新文章 → 我的项目
-//       → 我的游戏 ID → 工具矩阵 → 关于这个站点
-// 「最新文章」「个人档案」「工具矩阵」原在右侧栏，右栏移除后搬到这里。
+//       → 我的游戏 ID → 关于这个站点
+// 「最新文章」「个人档案」原在右侧栏，右栏移除后搬到这里。
+// 工具模块已移除：顶栏「工具」现为站外链接，站内不再有 /tools/ 路由。
 // ============================================================
 const allPosts = useAllPosts();
 const latest = computed(() => latestPosts(allPosts.value, 3));
-
-/** 工具矩阵：桌面一行四张卡，取前四个代表作 */
-const TOOL_FEATURED = TOOL_LINKS.slice(0, 4);
 
 /**
  * 「我的游戏 ID」的跑马灯阈值：超过 5 张卡才滚动。
@@ -197,39 +195,7 @@ useHead({ title: SITE.title });
       </div>
     </UPageSection>
 
-    <!-- 6. 工具矩阵：只展示三个代表 -->
-    <UPageSection
-      class="mt-12"
-      title="工具矩阵"
-      description="纯前端运行，数据不上传服务器。"
-      :ui="{ container: 'py-0! gap-5' }"
-    >
-      <UPageGrid style="--grid-min: 250px">
-        <UPageCard
-          v-for="tool in TOOL_FEATURED"
-          :key="tool.slug"
-          :to="`/tools/${tool.slug}`"
-          icon="i-lucide-wrench"
-          :title="tool.name"
-          :description="tool.desc"
-          variant="outline"
-          spotlight
-        />
-      </UPageGrid>
-      <template #footer>
-        <div class="flex justify-center">
-          <UButton
-            to="/tools/"
-            variant="soft"
-            color="neutral"
-            label="更多工具"
-            trailing-icon="i-lucide-arrow-right"
-          />
-        </div>
-      </template>
-    </UPageSection>
-
-    <!-- 7. 关于这个站点 -->
+    <!-- 6. 关于这个站点 -->
     <UPageSection
       class="mt-12 mb-4"
       title="关于这个站点"

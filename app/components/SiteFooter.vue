@@ -39,7 +39,9 @@ const year: string = '2026';
                 v-for="item in NAV_ITEMS"
                 :key="item.key"
                 class="text-sm text-toned transition-colors hover:text-primary"
-                :to="item.to"
+                :to="item.external ? item.href : withBase(item.href)"
+                :target="item.external ? '_blank' : undefined"
+                :rel="item.external ? 'noopener noreferrer' : undefined"
                 >{{ item.label }}</NuxtLink
               >
             </nav>
