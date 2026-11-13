@@ -23,6 +23,7 @@ export interface ProjectItem {
 }
 
 export const PROJECTS: ProjectItem[] = [
+  /*
   {
     name: 'PidanUI 官网',
     description:
@@ -30,10 +31,10 @@ export const PROJECTS: ProjectItem[] = [
     icon: 'i-lucide-monitor',
     to: 'https://pidanui.eggycore.top',
   },
+  */
   {
     name: '逃少音乐档案馆',
-    description:
-      '自 SS1 赛季起持续归档《逃跑吧！少年》的赛季 BGM，坚持内录而非拆包，规避版权风险。',
+    description: '自 SS1 赛季起持续归档《逃跑吧！少年》的赛季 BGM。',
     icon: 'i-simple-icons-bilibili',
     to: 'https://space.bilibili.com/3632301571311734',
   },

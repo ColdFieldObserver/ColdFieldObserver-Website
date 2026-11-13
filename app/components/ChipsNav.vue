@@ -12,11 +12,11 @@ const isActive = (path: string) => route.path.startsWith(path);
     <UButton
       v-for="item in BLOG_SUB_NAV"
       :key="item.key"
-      :to="item.to"
+      :to="item.href"
       :icon="item.icon"
       :label="item.label"
-      :variant="isActive(item.to) ? 'solid' : 'soft'"
-      :color="isActive(item.to) ? 'primary' : 'neutral'"
+      :variant="isActive(item.href) ? 'solid' : 'soft'"
+      :color="isActive(item.href) ? 'primary' : 'neutral'"
       size="sm"
     />
   </nav>

@@ -1,18 +1,15 @@
 name: Lint & Format
 
-# 代码风格守门：ESLint（可能出错的地方）+ Prettier（排版）
+# 质量门禁：ESLint（可能出错的地方）+ Prettier（排版）+ 构建与产物校验
 #
-# 三个触发来源：
-#   pull_request —— 所有 PR（含 fork 发起的）都跑一次
-#   push         —— 分支推送也跑，但只要不是 master；master 由 deploy.yml 以
-#                   workflow_call 调用，避免同一次推送跑两遍
-#   workflow_call —— 供 deploy.yml 复用，部署前先过这一关
+# 部署已迁到 Cloudflare Workers：在 Cloudflare 侧把仓库连上 Git（Workers Builds）
+# 之后，master 的推送自动构建部署，非生产分支 / PR 自动生成预览。
+# 仓库里不再保留部署流水线，也不再需要 CLOUDFLARE_* secrets。
+# 所以这里除了风格检查，还要自己把构建跑一遍：检查不过就不该发版。
 on:
   push:
-    # 注意：master 的检查交给 deploy.yml 里 needs 的关系，这里不要重复声明
-    branches-ignore: ['master']
   pull_request:
-  workflow_call:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -23,7 +20,7 @@ concurrency:
 
 jobs:
   quality:
-    name: ESLint + Prettier
+    name: ESLint + Prettier + Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -44,3 +41,7 @@ jobs:
 
       - name: ESLint
         run: pnpm run lint
+
+      # nuxi generate + sync-fonts + verify-output：构建不过或产物缺页直接失败
+      - name: Build
+        run: pnpm run build

@@ -2,9 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
-import { PAGE_SIZE, TOOL_LINKS } from '../shared/site';
-import { toArray } from '../shared/utils/term';
-import { yearOf } from '../shared/utils/date';
+// 显式 .ts 扩展名：本文件同时被 Vite（nuxt.config）与 Node（scripts/verify-output.mjs）
+// 直接 import，Node 的 ESM 解析不会补扩展名。
+import { PAGE_SIZE } from '../shared/site.ts';
+import { toArray } from '../shared/utils/term.ts';
+import { yearOf } from '../shared/utils/date.ts';
 
 /**
  * 构建期文章索引（供 nuxt.config 的 prerender:routes 使用）。
@@ -81,7 +83,6 @@ export function buildRoutes(): string[] {
     '/archives/',
     '/categories/',
     '/tags/',
-    '/tools/',
     '/atom.xml',
     '/rss.xml',
     '/api/search.json',
@@ -109,10 +110,6 @@ export function buildRoutes(): string[] {
         routes.push(`${base}/page/${page}`);
       }
     }
-  }
-
-  for (const tool of TOOL_LINKS) {
-    routes.push(`/tools/${tool.slug}`);
   }
 
   return routes;

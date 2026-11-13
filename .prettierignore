@@ -5,6 +5,7 @@ node_modules/
 .data/
 .nitro/
 .cache/
+.wrangler/
 dist/
 
 # 锁文件由包管理器生成，手动格式化只会制造无意义 diff

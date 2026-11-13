@@ -1,27 +1,45 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { SITE, TOOL_LINKS } from '#shared/site';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { SITE } from '#shared/site';
 import { AVATAR, GAME_IDS, HERO_INTRO, PROJECTS, SITE_NOTE } from '~/data/home';
 import { PERSONAL_PROFILE, SOCIAL_LINKS, TIMELINE } from '~/data/profile';
 import { latestPosts, useAllPosts } from '~/composables/usePosts';
 
 // ============================================================
 // 首页：Hero → 关于我 / 身份主线 → 最新文章 → 我的项目
-//       → 我的游戏 ID → 工具矩阵 → 关于这个站点
-// 「最新文章」「个人档案」「工具矩阵」原在右侧栏，右栏移除后搬到这里。
+//       → 我的游戏 ID → 关于这个站点
+// 「最新文章」「个人档案」原在右侧栏，右栏移除后搬到这里。
+// 工具模块已移除：顶栏「工具」现为站外链接，站内不再有 /tools/ 路由。
 // ============================================================
 const allPosts = useAllPosts();
 const latest = computed(() => latestPosts(allPosts.value, 3));
 
-/** 工具矩阵：桌面一行四张卡，取前四个代表作 */
-const TOOL_FEATURED = TOOL_LINKS.slice(0, 4);
-
 /**
- * 「我的游戏 ID」的跑马灯阈值：超过 5 张卡才滚动。
- * 只有两三个号时静止横排即可，滚动反而让人看不清名字。
+ * 「我的游戏 ID」的跑马灯阈值：超过 3 张卡才滚动。
+ * 卡片放大到 515px 后一排只放得下两张，号少时静止平铺更容易看清。
  */
-const ID_MARQUEE_MIN = 5;
+const ID_MARQUEE_MIN = 3;
 const idMarqueeActive = computed(() => GAME_IDS.length > ID_MARQUEE_MIN);
+
+// 窄屏判定（<768px）：与 PidanUI 官网 dffe9339 同一套 SSR 安全做法。
+// SSR 阶段没有 window，默认 false，与客户端首屏渲染一致，避免 hydration 不匹配；
+// 挂载后再用 matchMedia 读真实视口宽度，并监听旋转 / resize 等变化。
+const isNarrow = ref(false);
+let idMql: MediaQueryList | null = null;
+let idMqlHandler: ((e: MediaQueryListEvent) => void) | null = null;
+onMounted(() => {
+  if (!window.matchMedia) return;
+  idMql = window.matchMedia('(max-width: 767px)');
+  isNarrow.value = idMql.matches;
+  idMqlHandler = (e: MediaQueryListEvent) => (isNarrow.value = e.matches);
+  idMql.addEventListener('change', idMqlHandler);
+});
+onBeforeUnmount(() => {
+  if (idMql && idMqlHandler) idMql.removeEventListener('change', idMqlHandler);
+});
+
+// 仅「卡片够多 且 非窄屏」时启用跑马灯；窄屏一律退化为静态网格。
+const showMarquee = computed(() => idMarqueeActive.value && !isNarrow.value);
 
 useHead({ title: SITE.title });
 </script>
@@ -58,8 +76,8 @@ useHead({ title: SITE.title });
           :icon="link.icon"
           :label="link.name"
           size="lg"
-          :variant="link.name === 'GitHub' ? 'outline' : 'solid'"
-          :color="link.name === 'GitHub' ? 'neutral' : 'primary'"
+          variant="ghost"
+          color="neutral"
         />
       </div>
     </section>
@@ -124,7 +142,7 @@ useHead({ title: SITE.title });
     <UPageSection
       class="mt-12"
       title="我的项目"
-      description="长期在维护的两个站点。"
+      description="长期在维护的几个项目。"
       :ui="{ container: 'py-0! gap-5' }"
     >
       <UPageGrid style="--grid-min: 280px">
@@ -166,70 +184,33 @@ useHead({ title: SITE.title });
       </UPageGrid>
     </UPageSection>
 
-    <!-- 5. 我的游戏 ID：够多才跑马灯，否则静态横排 -->
+    <!-- 5. 我的游戏 ID：卡片够多且非窄屏才跑马灯，否则静态网格（不出现横滚动条） -->
     <UPageSection
       class="mt-12"
       title="我的游戏 ID"
       description="欢迎和我一起组队。"
       :ui="{ container: 'py-0! gap-5' }"
     >
-      <!-- 与 PidanUI 官网同一套规则：超过 5 张卡才滚动。
-           卡片少的时候跑马灯只会让人看不清名字，还会把留白变成空白跑道。 -->
-      <UMarquee
-        v-if="idMarqueeActive"
-        :repeat="2"
-        pause-on-hover
-        :overlay="false"
-        class="id-marquee"
-      >
+      <!-- 与 PidanUI 官网 dffe9339 同一套规则：窄屏(<768px)一律退化为静态网格。
+           卡片放大到 515px 后，静止态用网格平铺，容器不再需要横向滚动。 -->
+      <UMarquee v-if="showMarquee" :repeat="2" pause-on-hover :overlay="false" class="id-marquee">
         <GameIdCard v-for="item in GAME_IDS" :key="item.name" :item="item" />
       </UMarquee>
 
-      <!-- 不滚时仍是横向列表：可聚焦，键盘用户才能横向看全 -->
-      <div
-        v-else
-        class="id-scroller"
-        role="region"
-        tabindex="0"
-        aria-label="我的游戏 ID，可横向滚动"
-      >
-        <GameIdCard v-for="item in GAME_IDS" :key="item.name" :item="item" />
+      <!-- 静态网格：窄屏一行一张卡片，桌面按 515px 目标宽度自动分列；
+           卡片撑满列宽，容器任何视口下都不会出现横向滚动条。 -->
+      <div v-else class="id-static" role="list" aria-label="我的游戏 ID 卡片列表">
+        <GameIdCard
+          v-for="item in GAME_IDS"
+          :key="item.name"
+          :item="item"
+          class="id-card"
+          role="listitem"
+        />
       </div>
     </UPageSection>
 
-    <!-- 6. 工具矩阵：只展示三个代表 -->
-    <UPageSection
-      class="mt-12"
-      title="工具矩阵"
-      description="纯前端运行，数据不上传服务器。"
-      :ui="{ container: 'py-0! gap-5' }"
-    >
-      <UPageGrid style="--grid-min: 250px">
-        <UPageCard
-          v-for="tool in TOOL_FEATURED"
-          :key="tool.slug"
-          :to="`/tools/${tool.slug}`"
-          icon="i-lucide-wrench"
-          :title="tool.name"
-          :description="tool.desc"
-          variant="outline"
-          spotlight
-        />
-      </UPageGrid>
-      <template #footer>
-        <div class="flex justify-center">
-          <UButton
-            to="/tools/"
-            variant="soft"
-            color="neutral"
-            label="更多工具"
-            trailing-icon="i-lucide-arrow-right"
-          />
-        </div>
-      </template>
-    </UPageSection>
-
-    <!-- 7. 关于这个站点 -->
+    <!-- 6. 关于这个站点 -->
     <UPageSection
       class="mt-12 mb-4"
       title="关于这个站点"
@@ -248,7 +229,7 @@ useHead({ title: SITE.title });
               rel="noopener"
               variant="ghost"
               color="neutral"
-              icon="i-simple-icons-github"
+              icon="i-lucide-folder-git-2"
               label="站点源代码"
             />
           </div>
@@ -284,29 +265,35 @@ useHead({ title: SITE.title });
   pointer-events: none;
 }
 
-/* UMarquee 默认 gap 是 64px、一圈 20s；这里与卡片间距对齐并放慢 */
+/* UMarquee 默认 gap 是 64px、一圈 20s；这里与卡片间距对齐并放慢。
+   卡片从 260px 放大到 515px 后一圈距离约翻倍，时长同步调到 80s 保持线速度。 */
 .id-marquee {
   --gap: 16px;
-  --duration: 40s;
+  --duration: 80s;
 }
 
-/* 卡片不足 6 张时的静止形态：可手动横向滑，滑动停在卡片边界 */
-.id-scroller {
-  display: flex;
+/* 静态网格（非跑马灯形态）：容器不设 overflow-x，放不下就换行，
+   任何视口宽度下都不会出现横向滚动条。
+   - 窄屏(<768px)：单列、一行一张卡片，游戏 ID 卡需要足够大；
+   - 桌面(>=768px)：按 515px 目标宽度自动分列，放不下就少放一列。
+   卡片自身的 w-[515px] shrink-0 由 :deep 覆盖：width 跟随列宽、
+   上限 515px 居中，跑马灯里仍保留固定宽。 */
+.id-static {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  padding: 2px 2px 12px;
+  justify-items: center;
 }
 
-.id-scroller > * {
-  scroll-snap-align: start;
+.id-static :deep(.id-card) {
+  width: 100%;
+  min-width: 0;
+  max-width: 515px;
 }
 
-.id-scroller:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 4px;
-  border-radius: 12px;
+@media (min-width: 768px) {
+  .id-static {
+    grid-template-columns: repeat(auto-fit, minmax(min(515px, 100%), 1fr));
+  }
 }
 </style>

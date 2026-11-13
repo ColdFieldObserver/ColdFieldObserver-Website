@@ -41,5 +41,14 @@ export default defineAppConfig({
         'relative grid gap-4! ' +
         'grid-cols-[repeat(auto-fill,minmax(min(var(--grid-min,290px),100%),1fr))]!',
     },
+
+    /* ---- ProseBlockquote ----
+       Nuxt UI 的 ProseBlockquote 主题默认带 italic 工具类（extend 合并，
+       空串压不掉）。这里用 not-italic 在同组覆盖，让引用块默认保持正体；
+       显式修饰符（*强调* → <em>）仍由元素自身渲染为斜体。
+       引用块的边框 / 内边距 / 背景仍由 prose.css 独占。 */
+    prose: {
+      blockquote: { base: 'not-italic' },
+    },
   },
 });

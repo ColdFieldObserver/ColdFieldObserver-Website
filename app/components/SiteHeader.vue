@@ -18,8 +18,13 @@ const menuItems = computed(() =>
   NAV_ITEMS.map((item) => ({
     label: item.label,
     icon: item.icon,
-    to: item.to,
-    active: activeKey.value === item.key,
+    // 外链直接用绝对 URL，站内路由才过 withBase（与 OpenPidanUI 官网一致）
+    to: item.external ? item.href : withBase(item.href),
+    target: item.external ? '_blank' : undefined,
+    rel: item.external ? 'noopener noreferrer' : undefined,
+    // 外链的 ↗ 由 UNavigationMenu 的 externalIcon 自动补（target=_blank 时渲染），
+    // 这里不要再传 trailingIcon，否则会出现两个箭头
+    active: !item.external && activeKey.value === item.key,
   })),
 );
 
@@ -56,7 +61,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
     <template #title>
       <span class="flex items-center gap-2">
         <img
-          class="size-8 shrink-0 rounded-lg object-contain"
+          class="size-8 shrink-0 rounded-full object-contain"
           :src="withBase('/images/logo.webp')"
           :alt="SITE.brand"
           width="32"

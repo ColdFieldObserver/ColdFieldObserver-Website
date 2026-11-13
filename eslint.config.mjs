@@ -27,6 +27,8 @@ export default tseslint.config(
       '**/.data/**',
       '**/.nitro/**',
       '**/.cache/**',
+      // wrangler dev / deploy 生成的临时打包产物（含 middleware 注入胶水代码）
+      '**/.wrangler/**',
       '**/dist/**',
     ],
   },
@@ -62,7 +64,7 @@ export default tseslint.config(
 
   {
     rules: {
-      // 路由即文件（pages/index.vue、pages/tools/[slug].vue），文件名由约定决定
+      // 路由即文件（pages/index.vue、pages/posts/[slug].vue），文件名由约定决定
       'vue/multi-word-component-names': 'off',
       // defineProps 的类型声明已经表达默认值，这条规则只对 Options API 有意义
       'vue/require-default-prop': 'off',
