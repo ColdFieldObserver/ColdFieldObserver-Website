@@ -34,8 +34,7 @@ export const PROJECTS: ProjectItem[] = [
   */
   {
     name: '逃少音乐档案馆',
-    description:
-      '自 SS1 赛季起持续归档《逃跑吧！少年》的赛季 BGM。',
+    description: '自 SS1 赛季起持续归档《逃跑吧！少年》的赛季 BGM。',
     icon: 'i-simple-icons-bilibili',
     to: 'https://space.bilibili.com/3632301571311734',
   },
