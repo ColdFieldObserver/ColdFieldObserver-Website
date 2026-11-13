@@ -32,7 +32,7 @@ const socialLinks = SOCIAL_LINKS.map((link) => {
           <div class="min-w-0 lg:col-span-1">
             <NuxtLink class="flex items-center gap-2.5 text-lg font-bold text-default" to="/">
               <img
-                class="size-8 rounded-lg object-contain"
+                class="size-8 rounded-full object-contain"
                 :src="withBase('/images/logo.webp')"
                 :alt="SITE.brand"
                 width="32"
@@ -59,11 +59,11 @@ const socialLinks = SOCIAL_LINKS.map((link) => {
           </div>
 
           <!-- 友情链接 -->
-          <div class="min-w-0 md:col-span-1 lg:col-span-2">
+          <div class="min-w-0 md:col-span-1 lg:col-span-3">
             <h2 class="mb-3 text-[13px] font-bold tracking-[0.5px] text-dimmed uppercase">
               友情链接
             </h2>
-            <div class="grid gap-2 sm:grid-cols-2">
+            <div class="grid gap-2 sm:grid-cols-3">
               <a
                 v-for="link in FRIEND_LINKS"
                 :key="link.url"
@@ -78,7 +78,7 @@ const socialLinks = SOCIAL_LINKS.map((link) => {
             </div>
           </div>
 
-          <!-- 订阅与社交 -->
+          <!-- 暂时移除的部分
           <div class="min-w-0">
             <h2 class="mb-3 text-[13px] font-bold tracking-[0.5px] text-dimmed uppercase">
               订阅与社交
@@ -98,13 +98,28 @@ const socialLinks = SOCIAL_LINKS.map((link) => {
               </a>
             </div>
           </div>
-        </div>
+        --></div>
       </UContainer>
     </template>
 
     <template #left>
       <!-- 开源声明 -->
       <p class="text-sm text-dimmed">{{ year }} {{ SITE.brand }} · 网站代码以 MIT 许可证开源</p>
+    </template>
+
+    <template #right>
+      <!-- 社交图标 -->
+      <UButton
+        v-for="link in SOCIAL_LINKS"
+        :key="link.url"
+        :to="link.url"
+        target="_blank"
+        rel="noopener"
+        :icon="link.icon"
+        size="lg"
+        variant="ghost"
+        color="neutral"
+      />
     </template>
   </UFooter>
 </template>

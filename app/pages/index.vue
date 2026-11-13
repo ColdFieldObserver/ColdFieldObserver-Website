@@ -76,8 +76,8 @@ useHead({ title: SITE.title });
           :icon="link.icon"
           :label="link.name"
           size="lg"
-          :variant="link.name === 'GitHub' ? 'outline' : 'solid'"
-          :color="link.name === 'GitHub' ? 'neutral' : 'primary'"
+          variant="ghost"
+          color="neutral"
         />
       </div>
     </section>
@@ -229,7 +229,7 @@ useHead({ title: SITE.title });
               rel="noopener"
               variant="ghost"
               color="neutral"
-              icon="i-simple-icons-github"
+              icon="i-lucide-folder-git-2"
               label="站点源代码"
             />
           </div>

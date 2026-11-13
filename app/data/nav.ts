@@ -23,7 +23,7 @@ export interface NavItem {
 /** 顶栏一级导航 */
 export const NAV_ITEMS: NavItem[] = [
   { key: 'home', label: '首页', href: '/', icon: 'i-lucide-house' },
-  { key: 'blog', label: '博客', href: '/posts/', icon: 'i-lucide-newspaper' },
+  { key: 'blog', label: '博客', href: '/posts/', icon: 'i-lucide-notepad-text' },
   {
     key: 'tools',
     label: '工具',

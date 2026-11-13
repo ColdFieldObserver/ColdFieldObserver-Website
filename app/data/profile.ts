@@ -50,44 +50,34 @@ export interface FriendLink {
 /** 友情链接（顺序即底栏展示顺序） */
 export const FRIEND_LINKS: FriendLink[] = [
   {
-    name: '逃少音乐档案馆（B站）',
-    url: 'https://space.bilibili.com/3632301571311734',
-    icon: 'i-simple-icons-bilibili',
+    name: 'PidanUI官网',
+    url: 'https://pidanui.eggycore.top/',
+    icon: 'i-lucide-palette',
   },
   {
-    name: '逃少音乐档案馆（WP）',
-    url: 'https://dmmdzzmusicarchive.wordpress.com/',
-    icon: 'i-lucide-globe',
-  },
-  {
-    name: '冷域观者的B站个人空间',
+    name: 'BSOD-MEMZ的个人基地',
     url: 'https://space.bilibili.com/3706982592678629',
-    icon: 'i-simple-icons-bilibili',
+    icon: 'i-simple-icons-windows',
   },
   {
     name: '冷域观者的博客（上线了）',
     url: 'https://coldfieldobserver.mysxl.cn/',
-    icon: 'i-lucide-globe',
+    icon: 'i-lucide-notepad-text',
   },
   {
     name: '冷域观者的博客（WordPress）',
     url: 'https://alonewalkman.wordpress.com/',
-    icon: 'i-lucide-globe',
+    icon: 'i-simple-icons-wordpress',
   },
   {
-    name: '冷域观者的GitHub',
-    url: 'https://github.com/ColdFieldObserver',
-    icon: 'i-simple-icons-github',
-  },
-  {
-    name: 'Alone Voyager的GitHub Pages',
-    url: 'https://alonevoyager.github.io/',
-    icon: 'i-lucide-globe',
+    name: '皮蛋镜像站',
+    url: 'https://link3.cc/eggycore',
+    icon: 'i-lucide-archive',
   },
   {
     name: '蛋小蓝的博客（建设中）',
     url: 'https://danxiaolan.wordpress.com/',
-    icon: 'i-lucide-globe',
+    icon: 'i-simple-icons-wordpress',
   },
 ];
 
@@ -100,11 +90,6 @@ export interface SocialLink {
 
 export const SOCIAL_LINKS: SocialLink[] = [
   {
-    name: 'RSS订阅',
-    url: '/atom.xml',
-    icon: 'i-lucide-rss',
-  },
-  {
     name: 'B站',
     url: 'https://space.bilibili.com/3632301571311734',
     icon: 'i-simple-icons-bilibili',
@@ -113,5 +98,15 @@ export const SOCIAL_LINKS: SocialLink[] = [
     name: 'GitHub',
     url: 'https://github.com/ColdFieldObserver',
     icon: 'i-simple-icons-github',
+  },
+  {
+    name: 'QQ交流群',
+    url: 'https://qm.qq.com/q/o4dcIiXuAa',
+    icon: 'i-simple-icons-qq',
+  },
+  {
+    name: 'RSS订阅',
+    url: '/atom.xml',
+    icon: 'i-lucide-rss',
   },
 ];
