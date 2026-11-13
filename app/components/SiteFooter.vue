@@ -12,6 +12,7 @@ import { FRIEND_LINKS, SOCIAL_LINKS } from '~/data/profile';
 const year: string = '2026';
 
 // 站内相对路径补 base；订阅源补 alternate / Atom MIME
+/*
 const socialLinks = SOCIAL_LINKS.map((link) => {
   const isFeed: boolean = link.url === '/atom.xml';
   return {
@@ -21,6 +22,7 @@ const socialLinks = SOCIAL_LINKS.map((link) => {
     type: isFeed ? 'application/atom+xml' : undefined,
   };
 });
+*/
 </script>
 
 <template>
@@ -114,7 +116,6 @@ const socialLinks = SOCIAL_LINKS.map((link) => {
         :key="link.url"
         :to="link.url"
         target="_blank"
-        rel="noopener"
         :icon="link.icon"
         size="lg"
         variant="ghost"
