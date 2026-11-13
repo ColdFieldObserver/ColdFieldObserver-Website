@@ -23,6 +23,7 @@ export interface ProjectItem {
 }
 
 export const PROJECTS: ProjectItem[] = [
+  /*
   {
     name: 'PidanUI 官网',
     description:
@@ -30,6 +31,7 @@ export const PROJECTS: ProjectItem[] = [
     icon: 'i-lucide-monitor',
     to: 'https://pidanui.eggycore.top',
   },
+  */
   {
     name: '逃少音乐档案馆',
     description:

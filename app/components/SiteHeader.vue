@@ -61,7 +61,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
     <template #title>
       <span class="flex items-center gap-2">
         <img
-          class="size-8 shrink-0 rounded-lg object-contain"
+          class="size-8 shrink-0 rounded-full object-contain"
           :src="withBase('/images/logo.webp')"
           :alt="SITE.brand"
           width="32"

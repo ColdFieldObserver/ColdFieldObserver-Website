@@ -2,13 +2,14 @@
 import type { GameIdItem } from '~/data/home';
 
 // 首页「我的游戏 ID」的一张卡。
-// 宽度固定 + shrink-0：会被放进 UMarquee 或横向滚动容器，
-// 任何一侧允许收缩都会让图片被压扁。
+// 跑马灯形态：宽度固定 515px（原 260px 约放大一倍）+ shrink-0，任何一侧允许收缩都会让图片被压扁。
+// 静态网格形态下由父组件的 :deep(.id-card) 覆盖为 100%，撑满列宽 ——
+// 容器因此不需要横向滚动，也不会出现横滚动条。
 defineProps<{ item: GameIdItem }>();
 </script>
 
 <template>
-  <UCard class="w-[260px] shrink-0">
+  <UCard class="w-[515px] shrink-0">
     <a
       class="block overflow-hidden rounded-lg border border-default bg-muted"
       :href="item.image"

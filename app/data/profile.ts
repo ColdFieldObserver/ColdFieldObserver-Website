@@ -100,6 +100,11 @@ export interface SocialLink {
 
 export const SOCIAL_LINKS: SocialLink[] = [
   {
+    name: 'RSS订阅',
+    url: '/atom.xml',
+    icon: 'i-lucide-rss',
+  },
+  {
     name: 'B站',
     url: 'https://space.bilibili.com/3632301571311734',
     icon: 'i-simple-icons-bilibili',

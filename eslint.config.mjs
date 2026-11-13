@@ -27,6 +27,8 @@ export default tseslint.config(
       '**/.data/**',
       '**/.nitro/**',
       '**/.cache/**',
+      // wrangler dev / deploy 生成的临时打包产物（含 middleware 注入胶水代码）
+      '**/.wrangler/**',
       '**/dist/**',
     ],
   },
