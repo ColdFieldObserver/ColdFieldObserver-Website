@@ -2,7 +2,7 @@
 
 # ColdFieldObserver-Website
 
-![Last Commit](https://img.shields.io/github/last-commit/ColdFieldObserver/ColdFieldObserver-Website?label=Last%20Commit)
+![Last Commit](https://img.shields.io/github/last-commit/PidanEggyTeam/ColdFieldObserver-Website?label=Last%20Commit)
 [![Nuxt](https://img.shields.io/badge/Nuxt-4.6.3-00DC82?logo=Nuxt&logoColor=white)](https://nuxt.com/)
 [![Nuxt UI](https://img.shields.io/badge/Nuxt%20UI-4.12-00DC82?logo=Nuxt&logoColor=white)](https://ui.nuxt.com/)
 [![Vue](https://img.shields.io/badge/Vue-3.5.44-4FC08D?logo=Vue.js&logoColor=white)](https://cn.vuejs.org/)
@@ -92,7 +92,7 @@
 
 下面是这个仓库的[Stone Badge](https://stone.professorlee.work/)。
 
-![Stone Badge](https://stone.professorlee.work/api/stone/ColdFieldObserver/ColdFieldObserver-Website)
+![Stone Badge](https://stone.professorlee.work/api/stone/PidanEggyTeam/ColdFieldObserver-Website)
 
 ## 部署方式
 

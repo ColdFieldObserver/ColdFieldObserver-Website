@@ -29,7 +29,7 @@ export const FEED_LIMIT = 20;
  * 否则 giscus.app 会报 "giscus is not installed on this repository"。
  */
 export const GISCUS = {
-  repo: 'ColdFieldObserver/coldfieldobserver.github.io',
+  repo: 'PidanEggyTeam/ColdFieldObserver-Website',
   repoId: 'R_kgDOSspP7Q',
   category: 'Announcements',
   categoryId: 'DIC_kwDOSspP7c4DHfe3',

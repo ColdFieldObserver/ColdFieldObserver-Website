@@ -224,7 +224,7 @@ useHead({ title: SITE.title });
         <template #footer>
           <div class="flex flex-wrap items-center gap-2">
             <UButton
-              to="https://github.com/ColdFieldObserver/coldfieldobserver.github.io"
+              to="https://github.com/PidanEggyTeam/ColdFieldObserver-Website"
               target="_blank"
               rel="noopener"
               variant="ghost"
